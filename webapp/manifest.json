@@ -157,5 +157,11 @@
     "sap.cloud": {
         "public": true,
         "service": "vcpappvcpprodordconsumptionpivot"
+    },
+    "sap.platform.cf": {
+        "oAuthScopes": [
+            "$XSAPPNAME.User",
+            "$XSAPPNAME.admin"
+        ]
     }
 }
