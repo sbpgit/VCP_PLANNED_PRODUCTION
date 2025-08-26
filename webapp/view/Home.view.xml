@@ -1,0 +1,74 @@
+<mvc:View controllerName="vcpapp.vcpprodordconsumptionpivot.controller.Home"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:smartfilterbar="sap.ui.comp.smartfilterbar"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+    xmlns:table="sap.ui.table"
+    xmlns="sap.m"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+>
+    <f:DynamicPage id="idDynamicPagePOP">
+        <f:header>
+       <f:DynamicPageHeader>
+                <smartfilterbar:SmartFilterBar id="smartFilterBarPOP" entitySet="getProdOrdConsumptionNewAnly" search="onGo" clear="onClear" showClearOnFB="true" initialized="onFilterBarInit" useToolbar="false" liveMode="false">
+                    <smartfilterbar:controlConfiguration>
+                        <smartfilterbar:ControlConfiguration key="LOCATION_ID" mandatory="mandatory" label="Demand Location" />
+                        <smartfilterbar:ControlConfiguration key="REF_PRODID" mandatory="mandatory" label="Config Product" />
+                        <smartfilterbar:ControlConfiguration key="MAT_PARENT"  label="Parent" />
+                        <smartfilterbar:ControlConfiguration key="COMPONENT"  label="Component" />
+                        <smartfilterbar:ControlConfiguration key="UNIQUE_ID"  label="Unique ID" />
+                        <smartfilterbar:ControlConfiguration key="SALES_DOC"  label="Sales Document" />
+                        <smartfilterbar:ControlConfiguration key="WEEK_DATE" label="Week Date">
+                        <smartfilterbar:customControl>
+                        <DateRangeSelection id="idDaterangePOP"></DateRangeSelection>
+                        </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
+                    </smartfilterbar:controlConfiguration>
+                </smartfilterbar:SmartFilterBar>
+            </f:DynamicPageHeader>
+
+        </f:header>
+        <f:content>
+            <VBox
+                id="idPivotPagePOP"
+                busyIndicatorDelay="0"
+            >
+                <OverflowToolbar
+                    height="8%"
+                    visible="{= ${oGModel>/showPivot} }"
+                >
+                    <ToolbarSpacer />
+                    <ToggleButton  id ="idTogglePOP" text="Telescopic View" width="200px" pressed="true" press="onTogglePress" />
+                    
+                    <Button
+                        visible="{= ${oGModel>/showPivot} }"
+                        text="Columns"
+                        icon="sap-icon://table-column"
+                        iconFirst="true"
+                        press="onSelectColumns"
+                    />
+                    <!-- <Button
+                        visible="{= ${oGModel>/showPivot} }"
+                        icon="sap-icon://bar-chart"
+                        iconFirst="true"
+                        press="onSelectChart"
+                    /> -->
+                    <Button
+                        icon="sap-icon://excel-attachment"
+                        press="onExportPivot"
+                        visible="{= ${oGModel>/showPivot} }"
+                    />
+                </OverflowToolbar>
+                <table:Table
+                    visible="{= !${oGModel>/showPivot} }"
+                    width="100%"
+                />
+                <html:div
+                    id="mainDivPOP"
+                    class="mainDivClass"
+                />
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>
