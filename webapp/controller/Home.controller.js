@@ -8,6 +8,7 @@ sap.ui.define([
     "use strict";
     var that = this;
     return PivotControl.extend("vcpapp.vcpprodordconsumptionpivot.controller.Home", {
+        //Initilize
         onInit() {
             that = this;
             that.oGModel = that.getOwnerComponent().getModel("oGModel");
