@@ -16,8 +16,8 @@
             <Annotations Target="SAP.getProdOrdConsumptionNewAnly">
                 <Annotation Term="UI.SelectionFields">
                     <Collection>
-                        <PropertyPath>LOCATION_ID</PropertyPath>
                         <PropertyPath>REF_PRODID</PropertyPath>
+                        <PropertyPath>LOCATION_ID</PropertyPath>
                         <PropertyPath>MAT_PARENT</PropertyPath>
                         <PropertyPath>COMPONENT</PropertyPath>
                         <PropertyPath>UNIQUE_ID</PropertyPath>
@@ -27,6 +27,7 @@
                 </Annotation>
             </Annotations>
             <Annotations Target="SAP.getProdOrdConsumptionNewAnly/LOCATION_ID">
+            <Annotation Term="Common.Label" String="Parent Location"/>
                 <Annotation Term="Common.ValueList">
                     <Record Type="Common.ValueListType">
                         <PropertyValue Property="CollectionPath" String="getProdOrdConsumptionNewAnly" />
@@ -36,6 +37,23 @@
                                 <Record Type="Common.ValueListParameterInOut">
                                     <PropertyValue Property="LocalDataProperty" PropertyPath="LOCATION_ID" />
                                     <PropertyValue Property="ValueListProperty" String="LOCATION_ID" />
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP.getProdOrdConsumptionNewAnly/MANU_LOC">
+            <Annotation Term="Common.Label" String="Component Location"/>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="CollectionPath" String="getProdOrdConsumptionNewAnly" />
+                        <PropertyValue Property="SearchSupported" Bool="true" />
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="MANU_LOC" />
+                                    <PropertyValue Property="ValueListProperty" String="MANU_LOC" />
                                 </Record>
                             </Collection>
                         </PropertyValue>
