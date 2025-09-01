@@ -24,6 +24,7 @@ sap.ui.define([
             // that.is_Go_Ready_To_Press_Again = true;
             that.oGModel.setProperty("/showPivot", false);
         },
+
         loadFragments() {
             if (!that._pivotSetting) {
                 that._pivotSetting = sap.ui.xmlfragment(
@@ -33,6 +34,7 @@ sap.ui.define([
                 that.getView().addDependent(that._pivotSetting);
             }
         },
+        
         onAfterRendering() {
             that.addScrollEvent();
             that.oModel.read("/getWeeks", {
@@ -428,7 +430,7 @@ sap.ui.define([
             arr.splice(newIndex, 0, movedItem);
             return arr;
         },
-        
+
         checkSelect() {
             const table = sap.ui.getCore().byId("idDataTablePOP");
             table.getItems()
