@@ -428,6 +428,7 @@ sap.ui.define([
             arr.splice(newIndex, 0, movedItem);
             return arr;
         },
+        
         checkSelect() {
             const table = sap.ui.getCore().byId("idDataTablePOP");
             table.getItems()
@@ -454,6 +455,7 @@ sap.ui.define([
                     }
                 })
         },
+
         onAddColumn() {
             const selectItems = sap.ui.getCore().byId("idDataTablePOP").getSelectedItems();
             that.selectItems = selectItems;
@@ -462,9 +464,11 @@ sap.ui.define([
             // that.calledPivot(that.rawData);
             that._pivotSetting.close();
         },
+
         onCloseColumn() {
             that._pivotSetting.close();
         },
+
         onTogglePress: function (oEvent) {
             const oButton = oEvent.getSource();
             const $btn = oButton.$();
