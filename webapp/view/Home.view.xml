@@ -13,8 +13,8 @@
        <f:DynamicPageHeader>
                 <smartfilterbar:SmartFilterBar id="smartFilterBarPOP" entitySet="getProdOrdConsumptionNewAnly" search="onGo" clear="onClear" showClearOnFB="true" initialized="onFilterBarInit" useToolbar="false" liveMode="false">
                     <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="LOCATION_ID" mandatory="mandatory" label="Parent Location" />
                         <smartfilterbar:ControlConfiguration key="REF_PRODID" mandatory="mandatory" label="Config Product" />
+                        <smartfilterbar:ControlConfiguration key="LOCATION_ID"  label="Parent Location" />
                         <smartfilterbar:ControlConfiguration key="MAT_PARENT"  label="Parent" />
                         <smartfilterbar:ControlConfiguration key="COMPONENT"  label="Component" />
                         <smartfilterbar:ControlConfiguration key="UNIQUE_ID"  label="Unique ID" />
