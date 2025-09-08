@@ -1,10 +1,7 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
-], (BaseController, Filter, FilterOperator, JSONModel, MessageToast) => {
+], (BaseController, MessageToast) => {
     "use strict";
 
     return BaseController.extend("vcpapp.vcpprodordconsumptionpivot.controller.PivotControl", {
@@ -18,13 +15,26 @@ sap.ui.define([
             } else {
                 that.weekType = "TELESCOPIC_WEEK";
             }
+            let aFilters = that.byId("smartFilterBarPOP").getFilters();
+
 
             that.byId("idPivotPagePOP").setBusy(true);
             try {
+                // const urlParameters = {
+                //     $apply: finalApplyQuery,
+                //     // $skip: that.skip,
+                //     // $top: that.top, //batch size
+                // }
                 const res = await that.readModel(
-                    "getProdOrdConsumptionNew", that.aFilters
+                    "getProdOrdConsumptionNew", aFilters, {}
                 );
-                that.allData.push(...res);
+                const startVal = new Date(that.byId("idDaterangePOP").getDateValue()).toISOString().split('T')[0],
+                    endVal = this.byId("idDaterangePOP").getSecondDateValue().toISOString().split('T')[0];
+
+                var foundobj = that.calWeekData.find(f => f.WEEK_STARTDATE.toISOString().split('T')[0] <= startVal && f.WEEK_ENDDATE.toISOString().split('T')[0] >= startVal);
+                const vFromDate = foundobj.WEEK_STARTDATE.toISOString().split('T')[0];
+                const filterRes = res.filter(o => new Date(o.WEEK_DATE) >= new Date(vFromDate) && new Date(o.WEEK_DATE) <= new Date(endVal))
+                that.allData.push(...filterRes);
                 that.allData = that.allData.sort((a, b) => new Date(a.WEEK_DATE) - new Date(b.WEEK_DATE));
                 that.loadPivotTab(that.allData)
                 that.dataReady = true;
@@ -72,16 +82,6 @@ sap.ui.define([
                     lastScrollTop = currentScrollTop;
                 });
             }
-        },
-        flattenFilters(filters) {
-            return filters.reduce((acc, item) => {
-                if (item.aFilters) {
-                    acc.push(...item.aFilters);
-                } else {
-                    acc.push(item);
-                }
-                return acc;
-            }, []);
         },
         loadPivotCss() {
             const that = this;
@@ -279,17 +279,6 @@ sap.ui.define([
                                     // Fill empty cells with 0
                                     $(this).text("0");
                                 }
-                                // if ($(this).find('div').length > 0) {
-                                //     // Skip this td if it contains div elements
-                                //     return;
-                                // }
-                                // if (cellText.includes('.')) {
-                                //     // Remove decimal part (keep only the integer portion)
-                                //     $(this).text(cellText.split('.')[0]);
-                                // } else if (cellText === '') {
-                                //     // Fill empty cells with 0
-                                //     $(this).text('0');
-                                // }
                             });
                     }
 
@@ -343,67 +332,6 @@ sap.ui.define([
                 if (toElem) toElem.innerHTML = endDateStr;
             } catch (e) {
                 console.error("Error in updateDate:", e);
-            }
-        },
-        async DoFilterWork() {
-            const that = this;
-            try {
-                // that.assemblyManage.reset();
-                let aFilters = that.byId("smartFilterBarPOP").getFilters();
-                // reqTypeFilter = new Filter("REQ_TYPE", FilterOperator.EQ, "OD"),
-                // typeFilter = new Filter("TYPE", FilterOperator.EQ, "PI");
-
-                // aFilters.push(reqTypeFilter, typeFilter);
-
-                // const startVal = this.byId("idStartWeekPOP").getValue(),
-                const startVal = new Date(new Date().setDate(that.byId("idDaterangePOP").getDateValue().getDate() - 7)).toISOString().split('T')[0],
-                    endVal = this.byId("idDaterangePOP").getSecondDateValue().toISOString().split('T')[0];
-
-
-                if (startVal && endVal) {
-                    aFilters[0].aFilters.push(
-                        new Filter(
-                            "WEEK_DATE",
-                            FilterOperator.BT,
-                            startVal,
-                            endVal
-                        )
-                    );
-                } else if (startVal) {
-                    aFilters[0].aFilters.push(
-                        new Filter(
-                            "WEEK_DATE",
-                            FilterOperator.GT,
-                            startVal
-                        )
-                    );
-                } else if (endVal) {
-                    aFilters[0].aFilters.push(
-                        new Filter(
-                            "WEEK_DATE",
-                            FilterOperator.LE,
-                            endVal
-                        )
-                    );
-                }
-
-                // const flatFilterForReadAssembly = that.flattenFilters(aFilters);
-
-                // const Assembly = await that.getAssembly(flatFilterForReadAssembly);
-                // that.AllAssembly = Array.from(
-                //     new Map(
-                //         Assembly.map((item) => [
-                //             item.ASSEMBLY,
-                //             { ASSEMBLY: item.ASSEMBLY, PROD_DESC: item.PROD_DESC },
-                //         ])
-                //     ).values()
-                // );
-                that.aFilters = aFilters;
-            } catch (error) {
-                console.error(error);
-                that.dataReady = true;
-                that.byId("idPivotPagePOP").setBusy(false);
-                MessageToast.show(error.message);
             }
         },
         setDateRange(mode = "disable", years = 2, months = 3) {

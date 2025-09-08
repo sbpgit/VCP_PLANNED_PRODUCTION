@@ -1,10 +1,8 @@
 sap.ui.define([
     "./PivotControl",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
-], (PivotControl, Filter, FilterOperator, JSONModel, MessageToast) => {
+], (PivotControl, JSONModel, MessageToast) => {
     "use strict";
     var that = this;
     return PivotControl.extend("vcpapp.vcpprodordconsumptionpivot.controller.Home", {
@@ -17,14 +15,13 @@ sap.ui.define([
             that.dataReady = true;
             that.FilterBar = that.byId("smartFilterBarPOP");
             that.setDateRange("disable", 2);
-            that.columns = ["Manufacturing Location", "Parent", "Component"];
+            that.columns = ["Product", "Parent Location", "Parent", "Component"];
             that.pivotPage = that.byId("idPivotPagePOP");
             // that.FilterBar = that.getView().byId("filterbarPOP");
             that.loadFragments();
             // that.is_Go_Ready_To_Press_Again = true;
             that.oGModel.setProperty("/showPivot", false);
         },
-
         loadFragments() {
             if (!that._pivotSetting) {
                 that._pivotSetting = sap.ui.xmlfragment(
@@ -34,7 +31,6 @@ sap.ui.define([
                 that.getView().addDependent(that._pivotSetting);
             }
         },
-        
         onAfterRendering() {
             that.addScrollEvent();
             that.oModel.read("/getWeeks", {
@@ -72,58 +68,19 @@ sap.ui.define([
                 },
             });
         },
-        getFilters() {
-            var aTableFilters = that.FilterBar.getFilterGroupItems().reduce(function (aResult, oFilterGroupItem) {
-                var oControl = oFilterGroupItem.getControl();
-                var aSelectedKeys, aFilters;
-                if (oControl.getTokens) {
-                    aSelectedKeys = (oControl && oControl.getTokens()) ? oControl.getTokens() : [];
-                    aFilters = aSelectedKeys.map(function (sSelectedKey) {
-                        return new Filter({
-                            path: oFilterGroupItem.getName(),
-                            operator: FilterOperator.EQ,
-                            value1: sSelectedKey.getKey()
-                        });
-                    });
-                } else {
-                    aSelectedKeys = oControl.getValue()
-                    aFilters = [new Filter({
-                        path: oFilterGroupItem.getName(),
-                        operator: FilterOperator.EQ,
-                        value1: aSelectedKeys
-                    })]
-                }
-                if (aSelectedKeys.length > 0) {
-                    aResult.push(new Filter({
-                        filters: aFilters,
-                        and: false
-                    }));
-                }
-                return aResult;
-            }, []);
-            return aTableFilters;
-        },
-        async onGo() {
+        onGo() {
             if (that.dataReady) {
-                // const selectedItem = this.getView().byId("selectWeekType").getSelectedKey() ? this.getView().byId("selectWeekType").getSelectedKey() : "Telescopic";
                 const bPressed = this.getView().byId("idTogglePOP").getPressed();
                 const selectedItem = bPressed ? "Telescopic View" : "Calendar View";
                 that.dataReady = false;
                 that.skip = 0;
                 that.topCount = 10000;
-                // that.byId("idAssemblyBoxPOP").setModel(new JSONModel());
-                // that.ScrollCount = 1;
                 that.allData = [];
-                // that.ExistAssembly = [];
-                // that.assemblyManage.reset();
-
-                await that.DoFilterWork();
                 if (selectedItem == "Calendar View") {
                     this.loadData("CALENDAR_WEEK");
                 } else {
                     this.loadData("TELESCOPIC_WEEK");
                 }
-                // }
             }
         },
         readModel() {
@@ -139,7 +96,7 @@ sap.ui.define([
             // Function to recursively fetch data
             const fetchData = async () => {
                 // Create a copy of urlParameters and update skip
-                const currentUrlParameters = { "$top": that.topCount, "$skip": that.skip };
+                const currentUrlParameters = { ...urlParameters, "$top": that.topCount, "$skip": that.skip };
 
                 try {
                     const { promise, resolve, reject } = Promise.withResolvers();
@@ -186,7 +143,7 @@ sap.ui.define([
                 let label;
                 switch (key) {
                     case "LOCATION_ID":
-                        label = "Location";
+                        label = "Parent Location";
                         break;
                     case "LOCATION_DESC":
                         label = "Location Description";
@@ -207,7 +164,7 @@ sap.ui.define([
                         label = "Sales Doc. Item";
                         break;
                     case "MANU_LOC":
-                        label = "Manufacturing Location";
+                        label = "Component Location";
                         break;
                     case "COMPONENT":
                         label = "Component";
@@ -355,13 +312,10 @@ sap.ui.define([
             that._pivotSetting.open();
             const table = sap.ui.getCore().byId("idDataTablePOP"),
                 columns = [
-                    "Manufacturing Location",
-                    "Parent",
-                    "Component",
-                    "Location",
-                    "Product",
-                    "Sales Document",
+                    "Product", "Parent Location", "Parent", "Component",
+                    "Component Location",
                     "Unique Id",
+                    "Sales Document",
                     "Sales Doc. Item",
                     "Order Type",
                     "Procurement Type",
@@ -430,7 +384,6 @@ sap.ui.define([
             arr.splice(newIndex, 0, movedItem);
             return arr;
         },
-
         checkSelect() {
             const table = sap.ui.getCore().byId("idDataTablePOP");
             table.getItems()
@@ -457,7 +410,6 @@ sap.ui.define([
                     }
                 })
         },
-
         onAddColumn() {
             const selectItems = sap.ui.getCore().byId("idDataTablePOP").getSelectedItems();
             that.selectItems = selectItems;
@@ -466,11 +418,9 @@ sap.ui.define([
             // that.calledPivot(that.rawData);
             that._pivotSetting.close();
         },
-
         onCloseColumn() {
             that._pivotSetting.close();
         },
-
         onTogglePress: function (oEvent) {
             const oButton = oEvent.getSource();
             const $btn = oButton.$();
