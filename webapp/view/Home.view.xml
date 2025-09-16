@@ -9,6 +9,13 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
 >
     <f:DynamicPage id="idDynamicPagePOP">
+      <f:title>
+            <f:DynamicPageTitle>
+                <f:actions>
+						<Button class="classHdr" icon="sap-icon://sys-help" id="idNavPPC" press="onNavPress" type="Emphasized" tooltip="Help Document"/>
+					</f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
         <f:header>
        <f:DynamicPageHeader>
                 <smartfilterbar:SmartFilterBar id="smartFilterBarPOP" entitySet="getProdOrdConsumptionNewAnly" search="onGo" clear="onClear" showClearOnFB="true" initialized="onFilterBarInit" useToolbar="false" liveMode="false">

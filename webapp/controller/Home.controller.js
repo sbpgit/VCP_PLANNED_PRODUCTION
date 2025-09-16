@@ -494,6 +494,25 @@ sap.ui.define([
                     existingDiv.removeChild(existingDiv.firstChild);
                 }
             }
-        }
+        },
+        onNavPress: function () {
+            if (sap.ushell && sap.ushell.Container && sap.ushell.Container.getService) {
+                var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
+                // generate the Hash to display 
+                var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+                    target: {
+                        semanticObject: "VCPDocument",
+                        action: "Display"
+                    }
+                })) || "";
+                var oStorage = jQuery.sap.storage(jQuery.sap.storage.Type.local);
+                oStorage.put("nodeId", 103);
+                //Generate a  URL for the second application
+                var url = window.location.href.split('#')[0] + hash;
+                //Navigate to second app
+                sap.m.URLHelper.redirect(url, true);
+            }
+        },
+
     });
 });
