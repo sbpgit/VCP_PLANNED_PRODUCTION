@@ -24,7 +24,8 @@
                 <EntitySet Name="getSalesUnqData" EntityType="AnalyticalService.getSalesUnqData" sap:semantics="aggregate"/>
                 <EntitySet Name="getCIRLogData" EntityType="AnalyticalService.getCIRLogData" sap:semantics="aggregate"/>
                 <EntitySet Name="getVendedCapacity" EntityType="AnalyticalService.getVendedCapacity" sap:semantics="aggregate"/>
-                <EntitySet Name="getFinalOptionPercentages" EntityType="AnalyticalService.getFinalOptionPercentages" sap:semantics="aggregate"/>
+                <EntitySet Name="getFinalOptionPercentages" EntityType="AnalyticalService.getFinalOptionPercentages"/>
+                <EntitySet Name="getOptFilterdata" EntityType="AnalyticalService.getOptFilterdata" sap:semantics="aggregate"/>
                 <EntitySet Name="getLocProdData" EntityType="AnalyticalService.getLocProdData" sap:semantics="aggregate"/>
                 <EntitySet Name="getComponentReqData" EntityType="AnalyticalService.getComponentReqData" sap:semantics="aggregate"/>
                 <EntitySet Name="getAssemblyCompQty" EntityType="AnalyticalService.getAssemblyCompQty" sap:semantics="aggregate"/>
@@ -89,29 +90,28 @@
                     <PropertyRef Name="ID__"/>
                 </Key>
                 <Property Name="ID__" Type="Edm.String" Nullable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="LOCATION_ID" Type="Edm.String" MaxLength="4" sap:aggregation-role="dimension" sap:label="Demand Location"/>
-                <Property Name="PRODUCT_ID" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Product ID"/>
-                <Property Name="REF_PRODID" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Config Products"/>
-                <Property Name="UNIQUE_ID" Type="Edm.Int32" sap:aggregation-role="dimension" sap:label="Unique ID"/>
-                <Property Name="CHAR_NUM" Type="Edm.String" MaxLength="100" sap:aggregation-role="dimension" sap:label="Characteristic ID"/>
+                <Property Name="LOCATION_ID" Type="Edm.String" MaxLength="4" Nullable="false" sap:aggregation-role="dimension" sap:label="Demand Location"/>
+                <Property Name="PRODUCT_ID" Type="Edm.String" MaxLength="40" Nullable="false" sap:aggregation-role="dimension" sap:label="Product ID"/>
+                <Property Name="UNIQUE_ID" Type="Edm.Int32" Nullable="false" sap:aggregation-role="dimension" sap:label="Unique ID"/>
+                <Property Name="CHAR_NUM" Type="Edm.String" MaxLength="100" Nullable="false" sap:aggregation-role="dimension" sap:label="Characteristic ID"/>
+                <Property Name="CHARVAL_NUM" Type="Edm.String" MaxLength="80" Nullable="false" sap:aggregation-role="dimension" sap:label="Characteristic Value ID"/>
                 <Property Name="CHAR_DESC" Type="Edm.String" MaxLength="160" sap:aggregation-role="dimension" sap:label="Characteristic Description"/>
                 <Property Name="CHAR_NAME" Type="Edm.String" MaxLength="80" sap:aggregation-role="dimension" sap:label="Characteristic Name"/>
-                <Property Name="CHARVAL_NUM" Type="Edm.String" MaxLength="80" sap:aggregation-role="dimension" sap:label="Characteristic Value ID"/>
-                <Property Name="CHAR_VALUE" Type="Edm.String" MaxLength="80" sap:aggregation-role="dimension" sap:label="Characteristic Value"/>
                 <Property Name="CHARVAL_DESC" Type="Edm.String" MaxLength="160" sap:aggregation-role="dimension" sap:label="Characteristic Value Description"/>
+                <Property Name="MODEL_VERSION" Type="Edm.String" MaxLength="20" sap:label="Model Verison"/>
+                <Property Name="VERSION" Type="Edm.String" MaxLength="10" sap:label="Version"/>
+                <Property Name="SCENARIO" Type="Edm.String" MaxLength="32" sap:label="Scenario"/>
+                <Property Name="VERSION_NAME" Type="Edm.String" MaxLength="50" sap:label="Version Name"/>
+                <Property Name="SCENARIO_NAME" Type="Edm.String" MaxLength="50" sap:label="Scenario Name"/>
                 <Property Name="PERIODDESC" Type="Edm.String" MaxLength="50" sap:aggregation-role="dimension" sap:label="Period Desc"/>
+                <Property Name="LOCATION_DESC" Type="Edm.String" MaxLength="30" sap:label="Location Description"/>
+                <Property Name="PROD_DESC" Type="Edm.String" MaxLength="40" sap:label="Product Description"/>
                 <Property Name="WEEK_DATE" Type="Edm.DateTime" sap:aggregation-role="dimension" sap:label="Week Date" sap:display-format="Date"/>
-                <Property Name="YEAR" Type="Edm.String" sap:aggregation-role="dimension" sap:label="Week Date Year"/>
-                <Property Name="QUARTER" Type="Edm.String" sap:aggregation-role="dimension" sap:label="Week Date Quarter"/>
-                <Property Name="MONTH" Type="Edm.String" sap:aggregation-role="dimension" sap:label="Week Date Month"/>
-                <Property Name="ORD_QTY" Type="Edm.Decimal" Scale="3" Precision="13" sap:aggregation-role="measure" sap:label="Sales Order Quantity"/>
-                <Property Name="CIR_QTY" Type="Edm.Decimal" Scale="3" Precision="13" sap:aggregation-role="measure" sap:label="Forecast Order Quantity"/>
-                <Property Name="QUANTITY" Type="Edm.Decimal" Scale="3" Precision="13" sap:aggregation-role="measure" sap:label="Total Quantity"/>
-                <Property Name="RESERVE_FIELD1" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Reserve Field 1"/>
-                <Property Name="RESERVE_FIELD2" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Reserve Field 2"/>
-                <Property Name="RESERVE_FIELD3" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Reserve Field 3"/>
-                <Property Name="RESERVE_FIELD4" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Reserve Field 4"/>
-                <Property Name="RESERVE_FIELD5" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Reserve Field 5"/>
+                <Property Name="YEAR" Type="Edm.Int32" sap:aggregation-role="dimension" sap:label="Week Date Year"/>
+                <Property Name="QUARTER" Type="Edm.String" MaxLength="7" sap:aggregation-role="dimension" sap:label="Week Date Quarter"/>
+                <Property Name="MONTH" Type="Edm.Int32" sap:aggregation-role="dimension" sap:label="Week Date Month"/>
+                <Property Name="TYPE" Type="Edm.String" MaxLength="1" Nullable="false" sap:label="Type"/>
+                <Property Name="QUANTITY" Type="Edm.Decimal" Scale="3" Precision="13" sap:aggregation-role="measure" sap:label="Quantity"/>
             </EntityType>
             <EntityType Name="getUnqCharQty" sap:semantics="aggregate">
                 <Key>
@@ -249,45 +249,74 @@
                 <Property Name="RESERVE_FIELD4" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Reserve Field 4"/>
                 <Property Name="RESERVE_FIELD5" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Reserve Field 5"/>
             </EntityType>
-            <EntityType Name="getFinalOptionPercentages" sap:semantics="aggregate">
+            <EntityType Name="getFinalOptionPercentages">
+                <Key>
+                    <PropertyRef Name="LOCATION_ID"/>
+                    <PropertyRef Name="PRODUCT_ID"/>
+                    <PropertyRef Name="CUSTOMER_GROUP"/>
+                    <PropertyRef Name="MODEL_VERSION"/>
+                    <PropertyRef Name="CHAR_NUM"/>
+                    <PropertyRef Name="CHAR_NAME"/>
+                    <PropertyRef Name="CHARVAL_NUM"/>
+                    <PropertyRef Name="VERSION"/>
+                    <PropertyRef Name="SCENARIO"/>
+                    <PropertyRef Name="TYPE"/>
+                </Key>
+                <Property Name="LOCATION_ID" Type="Edm.String" MaxLength="4" Nullable="false"/>
+                <Property Name="PRODUCT_ID" Type="Edm.String" MaxLength="40" Nullable="false"/>
+                <Property Name="CUSTOMER_GROUP" Type="Edm.String" MaxLength="40" Nullable="false"/>
+                <Property Name="MODEL_VERSION" Type="Edm.String" MaxLength="20" Nullable="false"/>
+                <Property Name="CHAR_NUM" Type="Edm.String" MaxLength="100" Nullable="false"/>
+                <Property Name="CHAR_NAME" Type="Edm.String" MaxLength="100" Nullable="false"/>
+                <Property Name="CHARVAL_NUM" Type="Edm.String" MaxLength="80" Nullable="false"/>
+                <Property Name="VERSION" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="SCENARIO" Type="Edm.String" MaxLength="32" Nullable="false"/>
+                <Property Name="OPT_PERCENT" Type="Edm.Decimal" Scale="2" Precision="5"/>
+                <Property Name="OPT_QTY" Type="Edm.Decimal" Scale="3" Precision="13"/>
+                <Property Name="TYPE" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="CHAR_DESC" Type="Edm.String" MaxLength="160"/>
+                <Property Name="CHAR_TYPE" Type="Edm.String" MaxLength="4"/>
+                <Property Name="CHARVAL_DESC" Type="Edm.String" MaxLength="160"/>
+                <Property Name="VERSION_NAME" Type="Edm.String" MaxLength="50"/>
+                <Property Name="SCENARIO_NAME" Type="Edm.String" MaxLength="50"/>
+                <Property Name="LOCATION_DESC" Type="Edm.String" MaxLength="30"/>
+                <Property Name="PROD_DESC" Type="Edm.String" MaxLength="40"/>
+                <Property Name="KEY_FIG_ID" Type="Edm.Int32"/>
+                <Property Name="KEY_FIG_DESC" Type="Edm.String" MaxLength="100"/>
+                <Property Name="DISPLAY_ORDER" Type="Edm.Int32"/>
+                <Property Name="PRIORITY_ORDER" Type="Edm.Int32"/>
+                <Property Name="CALENDAR_WEEK" Type="Edm.String" MaxLength="50"/>
+                <Property Name="TELESCOPIC_WEEK" Type="Edm.String" MaxLength="50"/>
+                <Property Name="WEEK_STARTDATE" Type="Edm.DateTime" sap:display-format="Date"/>
+                <Property Name="WEEK_ENDDATE" Type="Edm.DateTime" sap:display-format="Date"/>
+                <Property Name="PERIODSTART" Type="Edm.DateTime" sap:display-format="Date"/>
+                <Property Name="PERIODEND" Type="Edm.DateTime" sap:display-format="Date"/>
+                <Property Name="LOCK" Type="Edm.Boolean"/>
+                <Property Name="COMMENTS" Type="Edm.String"/>
+                <Property Name="USER" Type="Edm.String"/>
+                <Property Name="OLD_VALUE" Type="Edm.Decimal" Scale="2" Precision="5"/>
+                <Property Name="DATE_TIME" Type="Edm.DateTimeOffset"/>
+            </EntityType>
+            <EntityType Name="getOptFilterdata" sap:semantics="aggregate">
                 <Key>
                     <PropertyRef Name="ID__"/>
                 </Key>
                 <Property Name="ID__" Type="Edm.String" Nullable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="LOCATION_ID" Type="Edm.String" MaxLength="4" sap:aggregation-role="dimension" sap:label="Location"/>
-                <Property Name="PRODUCT_ID" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Product"/>
-                <Property Name="CUSTOMER_GROUP" Type="Edm.String" MaxLength="40" sap:label="CUSTOMER_GROUP"/>
-                <Property Name="MODEL_VERSION" Type="Edm.String" MaxLength="20" sap:label="MODEL_VERSION"/>
-                <Property Name="CHAR_NUM" Type="Edm.String" MaxLength="100" sap:aggregation-role="dimension" sap:label="Characteristic"/>
-                <Property Name="CHAR_NAME" Type="Edm.String" MaxLength="100" sap:label="CHAR_NAME"/>
-                <Property Name="CHARVAL_NUM" Type="Edm.String" MaxLength="80" sap:aggregation-role="dimension" sap:label="Characteristic Value"/>
-                <Property Name="VERSION" Type="Edm.String" MaxLength="10" sap:aggregation-role="dimension" sap:label="Version"/>
-                <Property Name="SCENARIO" Type="Edm.String" MaxLength="32" sap:aggregation-role="dimension" sap:label="Scenario"/>
-                <Property Name="OPT_PERCENT" Type="Edm.Decimal" Scale="2" Precision="5" sap:label="OPT_PERCENT"/>
-                <Property Name="OPT_QTY" Type="Edm.Decimal" Scale="3" Precision="13" sap:label="OPT_QTY"/>
-                <Property Name="TYPE" Type="Edm.Int32" sap:label="TYPE"/>
-                <Property Name="CHAR_DESC" Type="Edm.String" MaxLength="160" sap:aggregation-role="dimension" sap:label="Characteristic Description"/>
-                <Property Name="CHAR_TYPE" Type="Edm.String" MaxLength="4" sap:label="Charateristic Type"/>
-                <Property Name="CHARVAL_DESC" Type="Edm.String" MaxLength="160" sap:aggregation-role="dimension" sap:label="Characteristic Value Description"/>
-                <Property Name="VERSION_NAME" Type="Edm.String" MaxLength="50" sap:aggregation-role="dimension" sap:label="Version Name"/>
-                <Property Name="SCENARIO_NAME" Type="Edm.String" MaxLength="50" sap:aggregation-role="dimension" sap:label="Scenario Name"/>
+                <Property Name="LOCATION_ID" Type="Edm.String" MaxLength="4" Nullable="false" sap:aggregation-role="dimension" sap:label="Location"/>
+                <Property Name="PRODUCT_ID" Type="Edm.String" MaxLength="40" Nullable="false" sap:aggregation-role="dimension" sap:label="Product"/>
                 <Property Name="LOCATION_DESC" Type="Edm.String" MaxLength="30" sap:aggregation-role="dimension" sap:label="Location Description"/>
                 <Property Name="PROD_DESC" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Product Description"/>
-                <Property Name="KEY_FIG_ID" Type="Edm.Int32" sap:label="Key Figure ID"/>
-                <Property Name="KEY_FIG_DESC" Type="Edm.String" MaxLength="100" sap:label="Key Figure Description"/>
-                <Property Name="DISPLAY_ORDER" Type="Edm.Int32" sap:label="Display Order"/>
-                <Property Name="PRIORITY_ORDER" Type="Edm.Int32" sap:label="Sort Order"/>
-                <Property Name="CALENDAR_WEEK" Type="Edm.String" MaxLength="50" sap:aggregation-role="dimension" sap:label="Calendar Week"/>
-                <Property Name="TELESCOPIC_WEEK" Type="Edm.String" MaxLength="50" sap:aggregation-role="dimension" sap:label="Telescopic Week"/>
-                <Property Name="WEEK_STARTDATE" Type="Edm.DateTime" sap:aggregation-role="dimension" sap:label="Week Start Date" sap:display-format="Date"/>
-                <Property Name="WEEK_ENDDATE" Type="Edm.DateTime" sap:label="Week End Date" sap:display-format="Date"/>
-                <Property Name="PERIODSTART" Type="Edm.DateTime" sap:label="Period Start Date" sap:display-format="Date"/>
-                <Property Name="PERIODEND" Type="Edm.DateTime" sap:label="Period End Date" sap:display-format="Date"/>
-                <Property Name="LOCK" Type="Edm.Boolean" sap:label="Lock"/>
-                <Property Name="COMMENTS" Type="Edm.String" sap:label="Comments"/>
-                <Property Name="USER" Type="Edm.String"/>
-                <Property Name="OLD_VALUE" Type="Edm.Decimal" Scale="2" Precision="5"/>
-                <Property Name="DATE_TIME" Type="Edm.DateTimeOffset"/>
+                <Property Name="CUSTOMER_GROUP" Type="Edm.String" MaxLength="40" Nullable="false" sap:label="Customer Group"/>
+                <Property Name="CHAR_NUM" Type="Edm.String" MaxLength="100" Nullable="false" sap:aggregation-role="dimension" sap:label="Characteristic"/>
+                <Property Name="CHARVAL_NUM" Type="Edm.String" MaxLength="80" Nullable="false" sap:aggregation-role="dimension" sap:label="Characteristic Value"/>
+                <Property Name="CHAR_DESC" Type="Edm.String" MaxLength="160" sap:aggregation-role="dimension" sap:label="Characteristic Description"/>
+                <Property Name="CHAR_NAME" Type="Edm.String" MaxLength="80" sap:label="Characteristic Name"/>
+                <Property Name="CHARVAL_DESC" Type="Edm.String" MaxLength="160" sap:aggregation-role="dimension" sap:label="Characteristic Value Description"/>
+                <Property Name="MODEL_VERSION" Type="Edm.String" MaxLength="20" Nullable="false" sap:label="Model Version"/>
+                <Property Name="VERSION" Type="Edm.String" MaxLength="10" Nullable="false" sap:aggregation-role="dimension" sap:label="Version"/>
+                <Property Name="VERSION_NAME" Type="Edm.String" MaxLength="50" sap:aggregation-role="dimension" sap:label="Version Name"/>
+                <Property Name="SCENARIO_NAME" Type="Edm.String" MaxLength="50" sap:aggregation-role="dimension" sap:label="Scenario Name"/>
+                <Property Name="SCENARIO" Type="Edm.String" MaxLength="32" Nullable="false" sap:aggregation-role="dimension" sap:label="Scenario"/>
             </EntityType>
             <EntityType Name="getLocProdData" sap:semantics="aggregate">
                 <Key>
@@ -323,6 +352,7 @@
                 <Property Name="ID__" Type="Edm.String" Nullable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="LOCATION_ID" Type="Edm.String" MaxLength="4" sap:aggregation-role="dimension" sap:label="Location"/>
                 <Property Name="LOCATION_DESC" Type="Edm.String" MaxLength="100" sap:aggregation-role="dimension" sap:label="Location Description"/>
+                <Property Name="FACTORY_LOCATION_DESC" Type="Edm.String" MaxLength="100"/>
                 <Property Name="PRODUCT_ID" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Product"/>
                 <Property Name="PROD_DESC" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Product Description"/>
                 <Property Name="ITEM_NUM" Type="Edm.String" MaxLength="6" sap:aggregation-role="dimension" sap:label="Item Number"/>
@@ -343,12 +373,14 @@
                 <Property Name="CONFIGURABLE" Type="Edm.String" MaxLength="1" sap:aggregation-role="dimension" sap:label="Configurable"/>
                 <Property Name="REQ_TYPE" Type="Edm.String" MaxLength="2"/>
                 <Property Name="TYPE" Type="Edm.String" MaxLength="2"/>
-                <Property Name="UNIQUE_ID" Type="Edm.Int32"/>
+                <Property Name="UNIQUE_ID" Type="Edm.String"/>
                 <Property Name="ASMB_QTY" Type="Edm.Decimal" Scale="2" Precision="18" sap:aggregation-role="measure" sap:label="Component Quantity"/>
                 <Property Name="CIR_QTY" Type="Edm.Decimal" Scale="2" Precision="18" sap:aggregation-role="measure" sap:label="Forecast Order Quantity"/>
                 <Property Name="CIR_ASMB_QTY" Type="Edm.Decimal" Scale="2" Precision="18" sap:aggregation-role="measure" sap:label="Assembly Requirements"/>
                 <Property Name="ACTUAL_QTY" Type="Edm.Decimal" Scale="2" Precision="18"/>
                 <Property Name="TOTAL_QTY" Type="Edm.Decimal" Scale="2" Precision="18"/>
+                <Property Name="PROD_DEM" Type="Edm.Decimal" Precision="13"/>
+                <Property Name="COEFFICIENTS" Type="Edm.Decimal" Precision="34"/>
             </EntityType>
             <EntityType Name="getTSHistoryCust">
                 <Key>
@@ -382,7 +414,7 @@
                 <Property Name="COMP_QTY" Type="Edm.Decimal" Scale="3" Precision="13" sap:label="COMP_QTY"/>
                 <Property Name="ORD_TYPE" Type="Edm.String" MaxLength="20" sap:label="ORD_TYPE"/>
                 <Property Name="WEEK_DATE" Type="Edm.DateTime" sap:label="WEEK_DATE" sap:display-format="Date"/>
-                <Property Name="UNIQUE_ID" Type="Edm.Int32" sap:aggregation-role="dimension" sap:label="Unique ID"/>
+                <Property Name="UNIQUE_ID" Type="Edm.String" sap:aggregation-role="dimension" sap:label="Unique ID"/>
                 <Property Name="LOCATION_DESC" Type="Edm.String" MaxLength="30" sap:aggregation-role="dimension" sap:label="Location Description"/>
                 <Property Name="PROD_DESC" Type="Edm.String" MaxLength="40" sap:aggregation-role="dimension" sap:label="Product Description"/>
                 <Property Name="CALENDAR_WEEK" Type="Edm.String" MaxLength="50" sap:label="CALENDAR_WEEK"/>
@@ -844,10 +876,6 @@
                 <Annotation Term="Analytics.Dimension" Bool="true"/>
                 <Annotation Term="Common.Label" String="Product ID"/>
             </Annotations>
-            <Annotations Target="AnalyticalService.getDemandAndForecast/REF_PRODID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Config Products"/>
-            </Annotations>
             <Annotations Target="AnalyticalService.getDemandAndForecast/UNIQUE_ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Analytics.Dimension" Bool="true"/>
                 <Annotation Term="Common.Label" String="Unique ID"/>
@@ -855,6 +883,10 @@
             <Annotations Target="AnalyticalService.getDemandAndForecast/CHAR_NUM" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Analytics.Dimension" Bool="true"/>
                 <Annotation Term="Common.Label" String="Characteristic ID"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getDemandAndForecast/CHARVAL_NUM" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Characteristic Value ID"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getDemandAndForecast/CHAR_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Analytics.Dimension" Bool="true"/>
@@ -864,21 +896,34 @@
                 <Annotation Term="Analytics.Dimension" Bool="true"/>
                 <Annotation Term="Common.Label" String="Characteristic Name"/>
             </Annotations>
-            <Annotations Target="AnalyticalService.getDemandAndForecast/CHARVAL_NUM" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Characteristic Value ID"/>
-            </Annotations>
-            <Annotations Target="AnalyticalService.getDemandAndForecast/CHAR_VALUE" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Characteristic Value"/>
-            </Annotations>
             <Annotations Target="AnalyticalService.getDemandAndForecast/CHARVAL_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Analytics.Dimension" Bool="true"/>
                 <Annotation Term="Common.Label" String="Characteristic Value Description"/>
             </Annotations>
+            <Annotations Target="AnalyticalService.getDemandAndForecast/MODEL_VERSION" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Model Verison"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getDemandAndForecast/VERSION" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Version"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getDemandAndForecast/SCENARIO" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Scenario"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getDemandAndForecast/VERSION_NAME" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Version Name"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getDemandAndForecast/SCENARIO_NAME" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Scenario Name"/>
+            </Annotations>
             <Annotations Target="AnalyticalService.getDemandAndForecast/PERIODDESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Analytics.Dimension" Bool="true"/>
                 <Annotation Term="Common.Label" String="Period Desc"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getDemandAndForecast/LOCATION_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Location Description"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getDemandAndForecast/PROD_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Product Description"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getDemandAndForecast/WEEK_DATE" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Analytics.Dimension" Bool="true"/>
@@ -896,37 +941,12 @@
                 <Annotation Term="Analytics.Dimension" Bool="true"/>
                 <Annotation Term="Common.Label" String="Week Date Month"/>
             </Annotations>
-            <Annotations Target="AnalyticalService.getDemandAndForecast/ORD_QTY" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Measure" Bool="true"/>
-                <Annotation Term="Common.Label" String="Sales Order Quantity"/>
-            </Annotations>
-            <Annotations Target="AnalyticalService.getDemandAndForecast/CIR_QTY" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Measure" Bool="true"/>
-                <Annotation Term="Common.Label" String="Forecast Order Quantity"/>
+            <Annotations Target="AnalyticalService.getDemandAndForecast/TYPE" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Type"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getDemandAndForecast/QUANTITY" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Analytics.Measure" Bool="true"/>
-                <Annotation Term="Common.Label" String="Total Quantity"/>
-            </Annotations>
-            <Annotations Target="AnalyticalService.getDemandAndForecast/RESERVE_FIELD1" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Reserve Field 1"/>
-            </Annotations>
-            <Annotations Target="AnalyticalService.getDemandAndForecast/RESERVE_FIELD2" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Reserve Field 2"/>
-            </Annotations>
-            <Annotations Target="AnalyticalService.getDemandAndForecast/RESERVE_FIELD3" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Reserve Field 3"/>
-            </Annotations>
-            <Annotations Target="AnalyticalService.getDemandAndForecast/RESERVE_FIELD4" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Reserve Field 4"/>
-            </Annotations>
-            <Annotations Target="AnalyticalService.getDemandAndForecast/RESERVE_FIELD5" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Reserve Field 5"/>
+                <Annotation Term="Common.Label" String="Quantity"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getUnqCharQty" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Aggregation.ApplySupported">
@@ -1883,92 +1903,11 @@
                 <Annotation Term="Analytics.Dimension" Bool="true"/>
                 <Annotation Term="Common.Label" String="Reserve Field 5"/>
             </Annotations>
-            <Annotations Target="AnalyticalService.getFinalOptionPercentages" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Aggregation.ApplySupported">
-                    <Record Type="Aggregation.ApplySupportedType">
-                        <PropertyValue Property="GroupableProperties">
-                            <Collection>
-                                <PropertyPath>LOCATION_ID</PropertyPath>
-                                <PropertyPath>PRODUCT_ID</PropertyPath>
-                                <PropertyPath>CUSTOMER_GROUP</PropertyPath>
-                                <PropertyPath>MODEL_VERSION</PropertyPath>
-                                <PropertyPath>CHAR_NUM</PropertyPath>
-                                <PropertyPath>CHARVAL_NUM</PropertyPath>
-                                <PropertyPath>VERSION</PropertyPath>
-                                <PropertyPath>SCENARIO</PropertyPath>
-                                <PropertyPath>CALENDAR_WEEK</PropertyPath>
-                                <PropertyPath>TELESCOPIC_WEEK</PropertyPath>
-                            </Collection>
-                        </PropertyValue>
-                        <PropertyValue Property="PropertyRestrictions" Bool="true"/>
-                        <PropertyValue Property="Transformations">
-                            <Collection>
-                                <String>aggregate</String>
-                                <String>bottompercent</String>
-                                <String>bottomsum</String>
-                                <String>bottomcount</String>
-                                <String>identity</String>
-                                <String>concat</String>
-                                <String>groupby</String>
-                                <String>filter</String>
-                                <String>search</String>
-                                <String>compute</String>
-                                <String>topcount</String>
-                                <String>toppercent</String>
-                                <String>topsum</String>
-                            </Collection>
-                        </PropertyValue>
-                    </Record>
-                </Annotation>
-            </Annotations>
-            <Annotations Target="AnalyticalService.EntityContainer/getFinalOptionPercentages" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Aggregation.ApplySupported">
-                    <Record Type="Aggregation.ApplySupportedType">
-                        <PropertyValue Property="GroupableProperties">
-                            <Collection>
-                                <PropertyPath>LOCATION_ID</PropertyPath>
-                                <PropertyPath>PRODUCT_ID</PropertyPath>
-                                <PropertyPath>CUSTOMER_GROUP</PropertyPath>
-                                <PropertyPath>MODEL_VERSION</PropertyPath>
-                                <PropertyPath>CHAR_NUM</PropertyPath>
-                                <PropertyPath>CHARVAL_NUM</PropertyPath>
-                                <PropertyPath>VERSION</PropertyPath>
-                                <PropertyPath>SCENARIO</PropertyPath>
-                                <PropertyPath>CALENDAR_WEEK</PropertyPath>
-                                <PropertyPath>TELESCOPIC_WEEK</PropertyPath>
-                            </Collection>
-                        </PropertyValue>
-                        <PropertyValue Property="PropertyRestrictions" Bool="true"/>
-                        <PropertyValue Property="Transformations">
-                            <Collection>
-                                <String>aggregate</String>
-                                <String>bottompercent</String>
-                                <String>bottomsum</String>
-                                <String>bottomcount</String>
-                                <String>identity</String>
-                                <String>concat</String>
-                                <String>groupby</String>
-                                <String>filter</String>
-                                <String>search</String>
-                                <String>compute</String>
-                                <String>topcount</String>
-                                <String>toppercent</String>
-                                <String>topsum</String>
-                            </Collection>
-                        </PropertyValue>
-                    </Record>
-                </Annotation>
-            </Annotations>
-            <Annotations Target="AnalyticalService.getFinalOptionPercentages/ID__" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="UI.Hidden" Bool="true"/>
-            </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/LOCATION_ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Location"/>
+                <Annotation Term="Common.Label" String="LOCATION_ID"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/PRODUCT_ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Product"/>
+                <Annotation Term="Common.Label" String="PRODUCT_ID"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/CUSTOMER_GROUP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.Label" String="CUSTOMER_GROUP"/>
@@ -1977,23 +1916,19 @@
                 <Annotation Term="Common.Label" String="MODEL_VERSION"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/CHAR_NUM" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Characteristic"/>
+                <Annotation Term="Common.Label" String="CHAR_NUM"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/CHAR_NAME" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.Label" String="CHAR_NAME"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/CHARVAL_NUM" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Characteristic Value"/>
+                <Annotation Term="Common.Label" String="CHARVAL_NUM"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/VERSION" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Version"/>
+                <Annotation Term="Common.Label" String="VERSION"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/SCENARIO" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Scenario"/>
+                <Annotation Term="Common.Label" String="SCENARIO"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/OPT_PERCENT" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.Label" String="OPT_PERCENT"/>
@@ -2005,31 +1940,25 @@
                 <Annotation Term="Common.Label" String="TYPE"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/CHAR_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Characteristic Description"/>
+                <Annotation Term="Common.Label" String="CHAR_DESC"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/CHAR_TYPE" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.Label" String="Charateristic Type"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/CHARVAL_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Characteristic Value Description"/>
+                <Annotation Term="Common.Label" String="CHARVAL_DESC"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/VERSION_NAME" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Version Name"/>
+                <Annotation Term="Common.Label" String="VERSION_NAME"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/SCENARIO_NAME" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Scenario Name"/>
+                <Annotation Term="Common.Label" String="SCENARIO_NAME"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/LOCATION_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Location Description"/>
+                <Annotation Term="Common.Label" String="LOCATION_DESC"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/PROD_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
-                <Annotation Term="Common.Label" String="Product Description"/>
+                <Annotation Term="Common.Label" String="PROD_DESC"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/KEY_FIG_ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.Label" String="Key Figure ID"/>
@@ -2044,15 +1973,12 @@
                 <Annotation Term="Common.Label" String="Sort Order"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/CALENDAR_WEEK" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
                 <Annotation Term="Common.Label" String="Calendar Week"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/TELESCOPIC_WEEK" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
                 <Annotation Term="Common.Label" String="Telescopic Week"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/WEEK_STARTDATE" xmlns="http://docs.oasis-open.org/odata/ns/edm">
-                <Annotation Term="Analytics.Dimension" Bool="true"/>
                 <Annotation Term="Common.Label" String="Week Start Date"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/WEEK_ENDDATE" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -2069,6 +1995,138 @@
             </Annotations>
             <Annotations Target="AnalyticalService.getFinalOptionPercentages/COMMENTS" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.Label" String="Comments"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Aggregation.ApplySupported">
+                    <Record Type="Aggregation.ApplySupportedType">
+                        <PropertyValue Property="GroupableProperties">
+                            <Collection>
+                                <PropertyPath>LOCATION_ID</PropertyPath>
+                                <PropertyPath>PRODUCT_ID</PropertyPath>
+                                <PropertyPath>CUSTOMER_GROUP</PropertyPath>
+                                <PropertyPath>MODEL_VERSION</PropertyPath>
+                                <PropertyPath>CHAR_NUM</PropertyPath>
+                                <PropertyPath>CHARVAL_NUM</PropertyPath>
+                                <PropertyPath>VERSION</PropertyPath>
+                                <PropertyPath>SCENARIO</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="PropertyRestrictions" Bool="true"/>
+                        <PropertyValue Property="Transformations">
+                            <Collection>
+                                <String>aggregate</String>
+                                <String>bottompercent</String>
+                                <String>bottomsum</String>
+                                <String>bottomcount</String>
+                                <String>identity</String>
+                                <String>concat</String>
+                                <String>groupby</String>
+                                <String>filter</String>
+                                <String>search</String>
+                                <String>compute</String>
+                                <String>topcount</String>
+                                <String>toppercent</String>
+                                <String>topsum</String>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="AnalyticalService.EntityContainer/getOptFilterdata" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Aggregation.ApplySupported">
+                    <Record Type="Aggregation.ApplySupportedType">
+                        <PropertyValue Property="GroupableProperties">
+                            <Collection>
+                                <PropertyPath>LOCATION_ID</PropertyPath>
+                                <PropertyPath>PRODUCT_ID</PropertyPath>
+                                <PropertyPath>CUSTOMER_GROUP</PropertyPath>
+                                <PropertyPath>MODEL_VERSION</PropertyPath>
+                                <PropertyPath>CHAR_NUM</PropertyPath>
+                                <PropertyPath>CHARVAL_NUM</PropertyPath>
+                                <PropertyPath>VERSION</PropertyPath>
+                                <PropertyPath>SCENARIO</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="PropertyRestrictions" Bool="true"/>
+                        <PropertyValue Property="Transformations">
+                            <Collection>
+                                <String>aggregate</String>
+                                <String>bottompercent</String>
+                                <String>bottomsum</String>
+                                <String>bottomcount</String>
+                                <String>identity</String>
+                                <String>concat</String>
+                                <String>groupby</String>
+                                <String>filter</String>
+                                <String>search</String>
+                                <String>compute</String>
+                                <String>topcount</String>
+                                <String>toppercent</String>
+                                <String>topsum</String>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/ID__" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/LOCATION_ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Location"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/PRODUCT_ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Product"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/LOCATION_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Location Description"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/PROD_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Product Description"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/CUSTOMER_GROUP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Customer Group"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/CHAR_NUM" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Characteristic"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/CHARVAL_NUM" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Characteristic Value"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/CHAR_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Characteristic Description"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/CHAR_NAME" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Characteristic Name"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/CHARVAL_DESC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Characteristic Value Description"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/MODEL_VERSION" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Model Version"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/VERSION" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Version"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/VERSION_NAME" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Version Name"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/SCENARIO_NAME" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Scenario Name"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getOptFilterdata/SCENARIO" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Analytics.Dimension" Bool="true"/>
+                <Annotation Term="Common.Label" String="Scenario"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getLocProdData" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Aggregation.ApplySupported">
@@ -2499,6 +2557,12 @@
                 <Annotation Term="Core.Computed" Bool="true"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getAssemblyCompQty/TOTAL_QTY" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getAssemblyCompQty/PROD_DEM" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="AnalyticalService.getAssemblyCompQty/COEFFICIENTS" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Core.Computed" Bool="true"/>
             </Annotations>
             <Annotations Target="AnalyticalService.getTSHistoryCust/LOCATION_ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">

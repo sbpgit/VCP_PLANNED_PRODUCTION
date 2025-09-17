@@ -2,7 +2,10 @@ sap.ui.define([
     "./PivotControl",
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
-], (PivotControl, JSONModel, MessageToast) => {
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator"
+], (PivotControl, JSONModel, MessageToast, Filter,
+    FilterOperator) => {
     "use strict";
     var that = this;
     return PivotControl.extend("vcpapp.vcpprodordconsumptionpivot.controller.Home", {
@@ -74,7 +77,7 @@ sap.ui.define([
                 const selectedItem = bPressed ? "Telescopic View" : "Calendar View";
                 that.dataReady = false;
                 that.skip = 0;
-                that.topCount = 10000;
+                that.topCount = 15000;
                 that.allData = [];
                 if (selectedItem == "Calendar View") {
                     this.loadData("CALENDAR_WEEK");
@@ -174,6 +177,9 @@ sap.ui.define([
                         break;
                     case "MAT_PARENT":
                         label = "Parent";
+                        break;
+                    case "COMP_QTY_SUM":
+                        label = "Component Qty";
                         break;
                     case "COMP_QTY":
                         label = "Component Qty";
@@ -494,6 +500,603 @@ sap.ui.define([
                     existingDiv.removeChild(existingDiv.firstChild);
                 }
             }
+        },
+        getApplyQueryForFields(groupbyFields, measures) {
+            // const that = this;
+
+            // Build groupby clause
+            let groupByClause = groupbyFields.join(",");
+
+            // Build aggregate clause with proper lowercase operations
+            let aggregateClause = undefined;
+            if (measures)
+                aggregateClause = measures
+                    .map((measure) => {
+                        return `${measure.field} with ${measure.operation} as ${measure.field
+                            }_${measure.operation.toUpperCase()}`;
+                    })
+                    .join(",");
+
+            // Build base apply query
+            let applyQuery = `groupby((${groupByClause}),aggregate(${aggregateClause}))`;
+            if (!aggregateClause) applyQuery = `groupby(${groupByClause})`;
+
+            return applyQuery;
+        },
+        buildSingleFilterExpression(filter) {
+            // const that = this;
+
+            const operator = getODataOperator(filter.sOperator);
+            function getODataOperator(op) {
+                // const that = this;
+
+                switch (op) {
+                    case FilterOperator.EQ:
+                        return "eq";
+                    case FilterOperator.NE:
+                        return "ne";
+                    case FilterOperator.LT:
+                        return "lt";
+                    case FilterOperator.LE:
+                        return "le";
+                    case FilterOperator.GT:
+                        return "gt";
+                    case FilterOperator.GE:
+                        return "ge";
+                    case FilterOperator.BT:
+                        return "bt";
+                    case FilterOperator.Contains:
+                        return "contains";
+                    case FilterOperator.StartsWith:
+                        return "startswith";
+                    case FilterOperator.EndsWith:
+                        return "endswith";
+                    default:
+                        return "eq";
+                }
+            }
+
+            const path = filter.sPath;
+            let val1, val2;
+            val1 = formatValue(filter.oValue1);
+            val2 = formatValue(filter.oValue2);
+            function formatValue(val) {
+                // const that = this;
+
+                if (val instanceof Date) return val.toISOString().split("T")[0];
+                if (typeof val === "string")
+                    return that.isDateString(val) ? val : `'${val.replace(/'/g, "''")}'`;
+                if (typeof val === "boolean") return val.toString();
+                return val;
+            }
+            if (path == "UNIQUE_ID") {
+                // val1 = Number(val1.trim().replace(/^['"]|['"]$/g, ""));
+                // that.isUniqueID = true;
+            }
+
+            if (filter.sOperator === FilterOperator.BT) {
+                if (!filter.oValue2) {
+                    throw new Error(`Missing oValue2 for 'BT' filter on ${path}`);
+                }
+                return `(${path} ge ${val1} and ${path} le ${val2})`;
+            }
+
+            if (["contains", "startswith", "endswith"].includes(operator)) {
+                return `${operator}(${path}, ${val1})`;
+            }
+
+            return `${path} ${operator} ${val1}`;
+        },
+        getODataOperator(op) {
+            // const that = this;
+
+            switch (op) {
+                case FilterOperator.EQ:
+                    return "eq";
+                case FilterOperator.NE:
+                    return "ne";
+                case FilterOperator.LT:
+                    return "lt";
+                case FilterOperator.LE:
+                    return "le";
+                case FilterOperator.GT:
+                    return "gt";
+                case FilterOperator.GE:
+                    return "ge";
+                case FilterOperator.BT:
+                    return "bt";
+                case FilterOperator.Contains:
+                    return "contains";
+                case FilterOperator.StartsWith:
+                    return "startswith";
+                case FilterOperator.EndsWith:
+                    return "endswith";
+                default:
+                    return "eq";
+            }
+        },
+        getFilterApplyQuery(baseApplyQuery, filtersToApply) {
+            // const that = this;
+
+            if (filtersToApply?.length > 0) {
+                const filterString = that.buildFilterString(filtersToApply);
+                if (filterString) {
+                    return `filter(${filterString})/${baseApplyQuery}`;
+                }
+            }
+            return baseApplyQuery;
+        },
+        formatValue(val) {
+            // const that = this;
+
+            if (val instanceof Date) return val.toISOString().split("T")[0];
+            if (typeof val === "string")
+                return that.isDateString(val) ? val : `'${val.replace(/'/g, "''")}'`;
+            if (typeof val === "boolean") return val.toString();
+            return val;
+        },
+        isDateString(str) {
+            return /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?)?$/.test(str);
+        },
+        getODataOperator(op) {
+            // const that = this;
+
+            switch (op) {
+                case FilterOperator.EQ:
+                    return "eq";
+                case FilterOperator.NE:
+                    return "ne";
+                case FilterOperator.LT:
+                    return "lt";
+                case FilterOperator.LE:
+                    return "le";
+                case FilterOperator.GT:
+                    return "gt";
+                case FilterOperator.GE:
+                    return "ge";
+                case FilterOperator.BT:
+                    return "bt";
+                case FilterOperator.Contains:
+                    return "contains";
+                case FilterOperator.StartsWith:
+                    return "startswith";
+                case FilterOperator.EndsWith:
+                    return "endswith";
+                default:
+                    return "eq";
+            }
+        },
+        flattenFilters(filters) {
+            const that = this;
+
+            return filters.reduce((acc, item) => {
+                if (item.aFilters) {
+                    acc.push(...item.aFilters);
+                } else {
+                    acc.push(item);
+                }
+                return acc;
+            }, []);
+        },
+        buildFilterString(filters) {
+            // const that = this;
+
+            return filters
+                .map((filter) => {
+                    if (filter.aFilters?.length) {
+                        const group = filter.aFilters
+                            .map(that.buildSingleFilterExpression)
+                            .join(filter.bAnd ? " and " : " or ");
+                        return `(${group})`;
+                    }
+                    return that.buildSingleFilterExpression(filter);
+                })
+                .join(" and ");
+        },
+        async loadData() {
+            // const that = this;
+            const bPressed = this.getView().byId("idTogglePOP").getPressed();
+            const selectedItem = bPressed ? "Telescopic View" : "Calendar View";
+
+            if (selectedItem == "Calendar View") {
+                that.weekType = "CALENDAR_WEEK";
+            } else {
+                that.weekType = "TELESCOPIC_WEEK";
+            }
+            let aFilters = that.byId("smartFilterBarPOP").getFilters();
+            that.byId("idPivotPagePOP").setBusy(true);
+
+            const startVal = new Date(that.byId("idDaterangePOP").getDateValue()).toISOString().split('T')[0],
+                endVal = this.byId("idDaterangePOP").getSecondDateValue().toISOString().split('T')[0];
+            var foundobj = that.calWeekData.find(f => f.WEEK_STARTDATE.toISOString().split('T')[0] <= startVal && f.WEEK_ENDDATE.toISOString().split('T')[0] >= startVal);
+            const vFromDate = foundobj.WEEK_STARTDATE.toISOString().split('T')[0];
+            const weekFilter = new Filter("WEEK_DATE", FilterOperator.BT, new Date(vFromDate), new Date(endVal))
+            if (aFilters) {
+                aFilters.push(weekFilter);
+            }
+
+
+
+            const flatFilter = that.flattenFilters(aFilters);
+            // let groupbyFields = [];
+
+            let groupbyFields = [
+                "LOCATION_ID",
+                "LOCATION_DESC",
+                "REF_PRODID",
+                "PROD_DESC",
+                "UNIQUE_ID",
+                "SALES_DOC",
+                "SALESDOC_ITEM",
+                "MANU_LOC",
+                "COMPONENT",
+                "ORD_TYPE",
+                "MAT_PARENT",
+                "COMP_PROCURE_TYPE",
+                "PROD_ORDER",
+                "WEEK_DATE",
+                that.weekType
+            ];
+            // const groupbyFields2 = [
+            //     "LOCATION_ID",
+            //     "LOCATION_DESC",
+            //     "REF_PRODID",
+            //     "PROD_DESC",
+            //     "SALES_DOC",
+            //     "UNIQUE_ID",
+            //     "SALESDOC_ITEM",
+            //     "MANU_LOC",
+            //     "COMPONENT",
+            //     "ORD_TYPE",
+            //     "MAT_PARENT",
+            //     "COMP_QTY",
+            //     "COMP_PROCURE_TYPE",
+            //     "PROD_ORDER",
+            //     "WEEK_DATE",
+            //     that.weekType
+            // ];
+            // if (flatFilter.find(i => i.sPath === "UNIQUE_ID")) {
+            //     groupbyFields = groupbyFields2;
+            // }
+
+            const fil = (flatFilter.find(i => !["REF_PRODID", "WEEK_DATE"].includes(i.sPath))) ? aFilters[0].aFilters : aFilters;
+            const
+                measures = [
+                    { field: "COMP_QTY", operation: "sum" }
+                ],
+                baseApplyQuery = that.getApplyQueryForFields(groupbyFields, measures),
+                finalApplyQuery = that.getFilterApplyQuery(
+                    baseApplyQuery,
+                    fil
+                );
+
+            try {
+                const res = await that.readModel(
+                    "getProdOrdConsumptionNew", [], {
+                    $apply: finalApplyQuery + '/orderby(LOCATION_ID,REF_PRODID,COMPONENT,WEEK_DATE)'
+                }
+                );
+
+                const filterRes = res.filter(o => new Date(o.WEEK_DATE) >= new Date(vFromDate) && new Date(o.WEEK_DATE) <= new Date(endVal))
+                that.allData.push(...filterRes);
+                that.allData = that.allData.sort((a, b) => new Date(a.WEEK_DATE) - new Date(b.WEEK_DATE));
+                that.loadPivotTab(that.allData)
+                that.dataReady = true;
+            } catch (error) {
+                console.error(error);
+                that.dataReady = true;
+                that.byId("idPivotPagePOP").setBusy(false);
+                MessageToast.show(error.message);
+            }
+        },
+        addScrollEvent: function () {
+            const that = this;
+            var oPivotDiv = that.byId("mainDivPOP").getDomRef();
+
+            // Track previous scroll position
+            var lastScrollTop = 0;
+            var isEventTriggered = false;
+
+            if (oPivotDiv) {
+                oPivotDiv.addEventListener("scroll", function (e) {
+                    var currentScrollTop = oPivotDiv.scrollTop;
+                    var scrollHeight = oPivotDiv.scrollHeight;
+                    var clientHeight = oPivotDiv.clientHeight;
+
+                    // Check if the user has scrolled vertically (ignores horizontal scroll)
+                    if (currentScrollTop > lastScrollTop) {
+                        // User is scrolling vertically
+                        // Check if scrolled to the bottom and the event hasn't already triggered
+                        if (
+                            !isEventTriggered &&
+                            that.hasMoreData &&
+                            currentScrollTop + clientHeight >= scrollHeight - 1
+                        ) {
+                            // Trigger the event only once
+                            that.skip += that.topCount
+                            isEventTriggered = true;
+                            that.loadData();
+                            setTimeout(function () {
+                                isEventTriggered = false;
+                            }, 1000); // Adjust the timeout according to data loading time
+                        }
+                    }
+
+                    // Update last scroll position
+                    lastScrollTop = currentScrollTop;
+                });
+            }
+        },
+        loadPivotCss() {
+            const that = this;
+            $(".pvtTable").ready(function () {
+                setTimeout(function () {
+                    // Adjust vertical alignment for headers with large rowspan
+                    $(".pvtTable")
+                        .find("th[rowspan]")
+                        .each(function () {
+                            if (parseInt($(this).attr("rowspan")) > 7) {
+                                $(this).css("vertical-align", "top");
+                            }
+                        });
+
+                    const allWeek = $(".pvtTable").find("thead tr:first th");
+
+                    $(allWeek).each(function (e) {
+                        const cellText = $(this).text();
+
+                        if (that.weekType === "TELESCOPIC_WEEK") {
+                            if (that.telMonth.includes(cellText)) {
+                                $(this).css("background-color", "#ced4da");
+                            }
+
+                            if (that.telQ.includes(cellText)) {
+                                $(this).css("background-color", "#adb5bd");
+                            }
+
+                            // if (e === allWeek.length - 1) {
+                            //     $(this).css("background-color", "#adb5bd");
+                            // }
+                        }
+
+                        $(this).addClass("weekHeader");
+
+                        const popoverHtml = `
+                                <div class="popover">
+                                    <div class="popover-content">
+                                        <div class="date-row">
+                                            <span class="date-label">From:</span>
+                                            <span class="From${cellText}">28 April 2025</span>
+                                        </div>
+                                        <div class="date-row">
+                                            <span class="date-label">To:</span>
+                                            <span class="To${cellText}">05 May 2025</span>
+                                        </div>
+                                    </div>
+                                </div>`;
+
+                        // Add popover to header cell
+                        $(this).append(popoverHtml);
+
+                        // On hover, update date
+                        $(this).hover(function () {
+                            that.updateDate(cellText);
+                        });
+                    });
+
+                    // Freeze columns in thead
+                    function freezeHeaderColumns() {
+                        // Process first row of thead
+                        const firstHeadRow = $(".pvtTable").find("thead tr:first");
+                        if (firstHeadRow.length) {
+                            let widthsHead = [0];
+
+                            // Calculate cumulative widths for first 3 columns (Location, Product, Assembly)
+                            const columnsToFreeze = Math.min(
+                                2,
+                                firstHeadRow.find("th").length
+                            );
+                            // const columnsToFreeze = 2;
+                            for (let i = 0; i < columnsToFreeze; i++) {
+                                const th = firstHeadRow.find(`th:eq(${i})`);
+                                if (th.length) {
+                                    const borderWidth =
+                                        parseFloat(th.css("border-left-width") || "0") +
+                                        parseFloat(th.css("border-right-width") || "0");
+                                    const paddingWidth =
+                                        parseFloat(th.css("padding-left") || "0") +
+                                        parseFloat(th.css("padding-right") || "0");
+                                    const width =
+                                        parseFloat(th.css("width") || "0") +
+                                        borderWidth +
+                                        paddingWidth;
+                                    widthsHead.push(widthsHead[i] + width);
+                                }
+                            }
+
+                            // Apply freeze positioning
+                            firstHeadRow.find("th").each(function (index) {
+                                if (index < columnsToFreeze) {
+                                    $(this).addClass("frezzThead");
+                                    $(this).css("left", `${widthsHead[index]}px`);
+                                }
+                            });
+                        }
+
+                        // Process second row of thead (axis labels)
+                        const secondHeadRow = $(".pvtTable").find("thead tr:eq(1)");
+                        if (secondHeadRow.length) {
+                            let widthsHead2 = [0];
+                            const thElements = secondHeadRow.find("th");
+                            const columnsToFreeze = thElements.length;
+
+                            // Calculate widths for columns to freeze
+                            for (let i = 0; i < columnsToFreeze; i++) {
+                                const th = thElements.eq(i);
+                                const borderWidth =
+                                    parseFloat(th.css("border-left-width") || "0") +
+                                    parseFloat(th.css("border-right-width") || "0");
+                                const paddingWidth =
+                                    parseFloat(th.css("padding-left") || "0") +
+                                    parseFloat(th.css("padding-right") || "0");
+                                const width =
+                                    parseFloat(th.css("width") || "0") +
+                                    borderWidth +
+                                    paddingWidth;
+                                widthsHead2.push(widthsHead2[i] + width);
+                            }
+
+                            // Apply freeze positioning
+                            thElements.each(function (index) {
+                                if (index < columnsToFreeze) {
+                                    $(this).addClass("frezzThead");
+                                    $(this).css("left", `${widthsHead2[index]}px`);
+                                }
+                            });
+                        }
+                    }
+
+                    // Freeze columns in tbody
+                    function freezeBodyColumns() {
+                        const tbody = $(".pvtTable").find("tbody");
+                        if (!tbody.length) return;
+
+                        // Find row with most th elements to use as reference
+                        let maxThCount = 0;
+                        let referenceRow = null;
+
+                        tbody.find("tr").each(function () {
+                            const thCount = $(this).find("th").length;
+                            if (thCount > maxThCount) {
+                                maxThCount = thCount;
+                                referenceRow = $(this);
+                            }
+                        });
+
+                        if (!referenceRow || maxThCount === 0) return;
+
+                        // Calculate cumulative widths for the columns to freeze
+                        let widths = [0];
+                        for (let i = 0; i < maxThCount; i++) {
+                            const th = referenceRow.find(`th:eq(${i})`);
+                            if (th.length) {
+                                const borderWidth =
+                                    parseFloat(th.css("border-left-width") || "0") +
+                                    parseFloat(th.css("border-right-width") || "0");
+                                const paddingWidth =
+                                    parseFloat(th.css("padding-left") || "0") +
+                                    parseFloat(th.css("padding-right") || "0");
+                                const width =
+                                    parseFloat(th.css("width") || "0") +
+                                    borderWidth +
+                                    paddingWidth;
+                                widths.push(widths[i] + width);
+                            }
+                        }
+
+                        // Apply freeze positioning to each row
+                        tbody.find("tr").each(function () {
+                            const thElements = $(this).find("th");
+                            const currentThCount = thElements.length;
+
+                            thElements.each(function (index) {
+                                // Adjust for rows with fewer th elements than the reference row
+                                let positionIndex = index;
+                                if (currentThCount < maxThCount) {
+                                    // Calculate offset based on hierarchy level
+                                    positionIndex += maxThCount - currentThCount;
+                                }
+
+                                $(this).addClass("frezz");
+                                $(this).css("left", `${widths[positionIndex]}px`);
+                            });
+                        });
+                    }
+
+                    // Format number cells (remove decimals, replace empty cells with 0)
+                    function formatCells() {
+                        $(".pvtTable")
+                            .find("td")
+                            .each(function () {
+                                let cellText = $(this).text().trim();
+                                if (cellText === "") {
+                                    // Fill empty cells with 0
+                                    $(this).text("0");
+                                }
+                            });
+                    }
+
+                    // Execute all functions
+                    freezeHeaderColumns();
+                    freezeBodyColumns();
+                    formatCells();
+                }, 300); // Delay to ensure table is fully rendered
+            });
+        },
+        updateDate(week) {
+            const that = this;
+            try {
+                const Calendar = Array.isArray(that.calWeekData)
+                    ? that.calWeekData.filter((o) => o && o[that.weekType] == week)
+                    : [];
+
+                const fromElem = document.getElementsByClassName(`From${week}`)[0];
+                const toElem = document.getElementsByClassName(`To${week}`)[0];
+
+                if (Calendar.length === 0) {
+                    $(".popover").hide();
+                    return;
+                }
+                $(".popover").show();
+                const startDate =
+                    Calendar[0]?.WEEK_STARTDATE instanceof Date
+                        ? Calendar[0].WEEK_STARTDATE
+                        : new Date(Calendar[0]?.WEEK_STARTDATE);
+                const endDate =
+                    Calendar[Calendar.length - 1]?.WEEK_ENDDATE instanceof Date
+                        ? Calendar[Calendar.length - 1].WEEK_ENDDATE
+                        : new Date(Calendar[Calendar.length - 1]?.WEEK_ENDDATE);
+
+                const startDateStr = isNaN(startDate)
+                    ? ""
+                    : startDate.toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                    });
+                const endDateStr = isNaN(endDate)
+                    ? ""
+                    : endDate.toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                    });
+
+                if (fromElem) fromElem.innerHTML = startDateStr;
+                if (toElem) toElem.innerHTML = endDateStr;
+            } catch (e) {
+                console.error("Error in updateDate:", e);
+            }
+        },
+        setDateRange(mode = "disable", years = 2, months = 3) {
+            const that = this;
+            const oDateL = new Date();
+            const oDateH = new Date();
+            if (mode === "disable") {
+                // Disable mode: tomorrow + specified years
+                oDateH.setFullYear(oDateL.getFullYear() + years);
+                that.byId("idDaterangePOP").setEnabled(false);
+                that.byId("idDaterangePOP").setDateValue(oDateL);
+                that.byId("idDaterangePOP").setSecondDateValue(oDateH);
+            } else if (mode === "enable") {
+                // Enable mode: tomorrow + specified months
+                oDateH.setMonth(oDateL.getMonth() + months);
+                that.byId("idDaterangePOP").setEnabled(true);
+                that.byId("idDaterangePOP").setDateValue(oDateL);
+                that.byId("idDaterangePOP").setSecondDateValue(oDateH);
+            }
+            that.byId("idDaterangePOP").setMinDate(new Date());
+            // that.byId("idDaterangePOP").setMinDate(new Date(new Date().setDate(new Date().getDate() + 7)));
         },
         onNavPress: function () {
             if (sap.ushell && sap.ushell.Container && sap.ushell.Container.getService) {

@@ -27,7 +27,6 @@
                 </Annotation>
             </Annotations>
             <Annotations Target="SAP.getProdOrdConsumptionNewAnly/LOCATION_ID">
-            <Annotation Term="Common.Label" String="Parent Location"/>
                 <Annotation Term="Common.ValueList">
                     <Record Type="Common.ValueListType">
                         <PropertyValue Property="CollectionPath" String="getProdOrdConsumptionNewAnly" />
@@ -44,7 +43,6 @@
                 </Annotation>
             </Annotations>
             <Annotations Target="SAP.getProdOrdConsumptionNewAnly/MANU_LOC">
-            <Annotation Term="Common.Label" String="Component Location"/>
                 <Annotation Term="Common.ValueList">
                     <Record Type="Common.ValueListType">
                         <PropertyValue Property="CollectionPath" String="getProdOrdConsumptionNewAnly" />
@@ -80,7 +78,6 @@
                     </Record>
                 </Annotation>
             </Annotations>
-
             <Annotations Target="SAP.getProdOrdConsumptionNewAnly/MAT_PARENT">
                 <Annotation Term="Common.ValueList">
                     <Record Type="Common.ValueListType">
@@ -105,7 +102,6 @@
                     </Record>
                 </Annotation>
             </Annotations>
-
             <Annotations Target="SAP.getProdOrdConsumptionNewAnly/COMPONENT">
                 <Annotation Term="Common.ValueList">
                     <Record Type="Common.ValueListType">
