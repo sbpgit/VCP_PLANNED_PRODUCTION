@@ -77,7 +77,7 @@ sap.ui.define([
                 const selectedItem = bPressed ? "Telescopic View" : "Calendar View";
                 that.dataReady = false;
                 that.skip = 0;
-                that.topCount = 15000;
+                that.topCount = 30000;
                 that.allData = [];
                 if (selectedItem == "Calendar View") {
                     this.loadData("CALENDAR_WEEK");
@@ -420,7 +420,10 @@ sap.ui.define([
             const selectItems = sap.ui.getCore().byId("idDataTablePOP").getSelectedItems();
             that.selectItems = selectItems;
             that.columns = sap.ui.getCore().byId("idDataTablePOP").getModel().getData().data.filter(o => o.select).map(o => o.field);
-            that.loadPivotTab(that.allData);
+            if (that.columns.includes("Unique Id") || that.columns.includes("Sales Document")) {
+                that.onGo();
+            } else
+                that.loadPivotTab(that.allData);
             // that.calledPivot(that.rawData);
             that._pivotSetting.close();
         },
@@ -717,7 +720,8 @@ sap.ui.define([
 
 
 
-            const flatFilter = that.flattenFilters(aFilters);
+            // const flatFilter = that.flattenFilters(aFilters);
+            const allField = Object.keys(that.byId("smartFilterBarPOP").getFilterData());
             // let groupbyFields = [];
 
             let groupbyFields = [
@@ -725,8 +729,8 @@ sap.ui.define([
                 "LOCATION_DESC",
                 "REF_PRODID",
                 "PROD_DESC",
-                "UNIQUE_ID",
-                "SALES_DOC",
+                // "UNIQUE_ID",
+                // "SALES_DOC",
                 "SALESDOC_ITEM",
                 "MANU_LOC",
                 "COMPONENT",
@@ -737,29 +741,32 @@ sap.ui.define([
                 "WEEK_DATE",
                 that.weekType
             ];
-            // const groupbyFields2 = [
-            //     "LOCATION_ID",
-            //     "LOCATION_DESC",
-            //     "REF_PRODID",
-            //     "PROD_DESC",
-            //     "SALES_DOC",
-            //     "UNIQUE_ID",
-            //     "SALESDOC_ITEM",
-            //     "MANU_LOC",
-            //     "COMPONENT",
-            //     "ORD_TYPE",
-            //     "MAT_PARENT",
-            //     "COMP_QTY",
-            //     "COMP_PROCURE_TYPE",
-            //     "PROD_ORDER",
-            //     "WEEK_DATE",
-            //     that.weekType
-            // ];
-            // if (flatFilter.find(i => i.sPath === "UNIQUE_ID")) {
-            //     groupbyFields = groupbyFields2;
-            // }
+            const groupbyFields2 = [
+                "LOCATION_ID",
+                "LOCATION_DESC",
+                "REF_PRODID",
+                "PROD_DESC",
+                "SALES_DOC",
+                "UNIQUE_ID",
+                "SALESDOC_ITEM",
+                "MANU_LOC",
+                "COMPONENT",
+                "ORD_TYPE",
+                "MAT_PARENT",
+                "COMP_QTY",
+                "COMP_PROCURE_TYPE",
+                "PROD_ORDER",
+                "WEEK_DATE",
+                that.weekType
+            ];
+            let orderby = '/orderby(LOCATION_ID,REF_PRODID,COMPONENT,WEEK_DATE)';
+            if (allField.find(i => i === "UNIQUE_ID") || (that.columns.includes("Unique Id") || that.columns.includes("Sales Document") || allField.find(i => i === "SALES_DOC"))) {
+                groupbyFields = groupbyFields2;
+                that.topCount = 20000;
+                orderby = '/orderby(REF_PRODID,COMPONENT,UNIQUE_ID,SALES_DOC,WEEK_DATE)';
+            }
 
-            const fil = (flatFilter.find(i => !["REF_PRODID", "WEEK_DATE"].includes(i.sPath))) ? aFilters[0].aFilters : aFilters;
+            const fil = (allField.find(i => !["REF_PRODID", "WEEK_DATE"].includes(i))) ? aFilters[0].aFilters : aFilters;
             const
                 measures = [
                     { field: "COMP_QTY", operation: "sum" }
@@ -773,7 +780,7 @@ sap.ui.define([
             try {
                 const res = await that.readModel(
                     "getProdOrdConsumptionNew", [], {
-                    $apply: finalApplyQuery + '/orderby(LOCATION_ID,REF_PRODID,COMPONENT,WEEK_DATE)'
+                    $apply: finalApplyQuery + orderby
                 }
                 );
 
@@ -1085,13 +1092,13 @@ sap.ui.define([
             if (mode === "disable") {
                 // Disable mode: tomorrow + specified years
                 oDateH.setFullYear(oDateL.getFullYear() + years);
-                that.byId("idDaterangePOP").setEnabled(false);
+                // that.byId("idDaterangePOP").setEnabled(false);
                 that.byId("idDaterangePOP").setDateValue(oDateL);
                 that.byId("idDaterangePOP").setSecondDateValue(oDateH);
             } else if (mode === "enable") {
                 // Enable mode: tomorrow + specified months
                 oDateH.setMonth(oDateL.getMonth() + months);
-                that.byId("idDaterangePOP").setEnabled(true);
+                // that.byId("idDaterangePOP").setEnabled(true);
                 that.byId("idDaterangePOP").setDateValue(oDateL);
                 that.byId("idDaterangePOP").setSecondDateValue(oDateH);
             }
