@@ -285,6 +285,7 @@ sap.ui.define([
                 if (!tableElement) {
                     throw new Error("Table with class 'pvtTable' not found");
                 }
+
                 const clonedTable = tableElement.cloneNode(true);
 
                 // Remove all elements with class 'popover' from the cloned table
@@ -294,11 +295,11 @@ sap.ui.define([
                 });
 
                 const dataType = 'application/vnd.ms-excel';
-                const tableHTML = tableElement.outerHTML;
+                // Use the cleaned cloned table instead of the original
+                const tableHTML = clonedTable.outerHTML;
                 const encodedHTML = encodeURIComponent(tableHTML);
-                // const filename = `Pivot_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xls`;
-                const filename = "Production Orders.xls";
 
+                const filename = "Production Orders.xls";
                 const downloadLink = document.createElement("a");
                 downloadLink.href = 'data:' + dataType + ', ' + encodedHTML;
                 downloadLink.download = filename;
@@ -419,12 +420,24 @@ sap.ui.define([
         onAddColumn() {
             const selectItems = sap.ui.getCore().byId("idDataTablePOP").getSelectedItems();
             that.selectItems = selectItems;
-            that.columns = sap.ui.getCore().byId("idDataTablePOP").getModel().getData().data.filter(o => o.select).map(o => o.field);
-            if (that.columns.includes("Unique Id") || that.columns.includes("Sales Document")) {
-                that.onGo();
-            } else
+            const currentColumn = sap.ui.getCore().byId("idDataTablePOP").getModel().getData().data.filter(o => o.select).map(o => o.field);
+            const requiredColumns = ["Unique Id", "Sales Document", "Order #"];
+
+            const hadRequiredColumns = requiredColumns.some(col => that.columns.includes(col));
+            const hasRequiredColumns = requiredColumns.some(col => currentColumn.includes(col));
+
+            that.columns = currentColumn;
+            if (hadRequiredColumns && hasRequiredColumns) {
                 that.loadPivotTab(that.allData);
-            // that.calledPivot(that.rawData);
+            }
+            else if (hadRequiredColumns && !hasRequiredColumns) {
+                that.onGo();
+            } else if (hasRequiredColumns) {
+                that.onGo();
+            } else {
+                that.loadPivotTab(that.allData);
+            }
+
             that._pivotSetting.close();
         },
         onCloseColumn() {
@@ -497,6 +510,7 @@ sap.ui.define([
             that.setDateRange("disable", 2);
             newDiv.id = `pivotGrid`;
             newDiv.textContent = "";
+            that.columns = ["Product", "Parent Location", "Parent", "Component"];
             var existingDiv = document.querySelector(`[id*='mainDivPOP']`);
             if (existingDiv.children.length > 0) {
                 while (existingDiv.firstChild) {
@@ -504,200 +518,71 @@ sap.ui.define([
                 }
             }
         },
-        getApplyQueryForFields(groupbyFields, measures) {
-            // const that = this;
+        makeApplyQuery(filterData, groupbyFields, measures, orderby) {
+            let st = "";
+            // Build filter string
+            Object.entries(filterData).forEach(([key, value]) => {
+                const items = value.items;
+                let thisFilterString = "";
 
-            // Build groupby clause
-            let groupByClause = groupbyFields.join(",");
+                items.forEach(({ key: itemKey }) => {
+                    if (thisFilterString === "") {
 
-            // Build aggregate clause with proper lowercase operations
-            let aggregateClause = undefined;
-            if (measures)
-                aggregateClause = measures
-                    .map((measure) => {
-                        return `${measure.field} with ${measure.operation} as ${measure.field
-                            }_${measure.operation.toUpperCase()}`;
-                    })
-                    .join(",");
+                        thisFilterString = `${key} eq '${itemKey}'`;
 
-            // Build base apply query
-            let applyQuery = `groupby((${groupByClause}),aggregate(${aggregateClause}))`;
-            if (!aggregateClause) applyQuery = `groupby(${groupByClause})`;
+                    } else {
 
-            return applyQuery;
-        },
-        buildSingleFilterExpression(filter) {
-            // const that = this;
+                        thisFilterString += ` or ${key} eq '${itemKey}'`;
 
-            const operator = getODataOperator(filter.sOperator);
-            function getODataOperator(op) {
-                // const that = this;
-
-                switch (op) {
-                    case FilterOperator.EQ:
-                        return "eq";
-                    case FilterOperator.NE:
-                        return "ne";
-                    case FilterOperator.LT:
-                        return "lt";
-                    case FilterOperator.LE:
-                        return "le";
-                    case FilterOperator.GT:
-                        return "gt";
-                    case FilterOperator.GE:
-                        return "ge";
-                    case FilterOperator.BT:
-                        return "bt";
-                    case FilterOperator.Contains:
-                        return "contains";
-                    case FilterOperator.StartsWith:
-                        return "startswith";
-                    case FilterOperator.EndsWith:
-                        return "endswith";
-                    default:
-                        return "eq";
-                }
-            }
-
-            const path = filter.sPath;
-            let val1, val2;
-            val1 = formatValue(filter.oValue1);
-            val2 = formatValue(filter.oValue2);
-            function formatValue(val) {
-                // const that = this;
-
-                if (val instanceof Date) return val.toISOString().split("T")[0];
-                if (typeof val === "string")
-                    return that.isDateString(val) ? val : `'${val.replace(/'/g, "''")}'`;
-                if (typeof val === "boolean") return val.toString();
-                return val;
-            }
-            if (path == "UNIQUE_ID") {
-                // val1 = Number(val1.trim().replace(/^['"]|['"]$/g, ""));
-                // that.isUniqueID = true;
-            }
-
-            if (filter.sOperator === FilterOperator.BT) {
-                if (!filter.oValue2) {
-                    throw new Error(`Missing oValue2 for 'BT' filter on ${path}`);
-                }
-                return `(${path} ge ${val1} and ${path} le ${val2})`;
-            }
-
-            if (["contains", "startswith", "endswith"].includes(operator)) {
-                return `${operator}(${path}, ${val1})`;
-            }
-
-            return `${path} ${operator} ${val1}`;
-        },
-        getODataOperator(op) {
-            // const that = this;
-
-            switch (op) {
-                case FilterOperator.EQ:
-                    return "eq";
-                case FilterOperator.NE:
-                    return "ne";
-                case FilterOperator.LT:
-                    return "lt";
-                case FilterOperator.LE:
-                    return "le";
-                case FilterOperator.GT:
-                    return "gt";
-                case FilterOperator.GE:
-                    return "ge";
-                case FilterOperator.BT:
-                    return "bt";
-                case FilterOperator.Contains:
-                    return "contains";
-                case FilterOperator.StartsWith:
-                    return "startswith";
-                case FilterOperator.EndsWith:
-                    return "endswith";
-                default:
-                    return "eq";
-            }
-        },
-        getFilterApplyQuery(baseApplyQuery, filtersToApply) {
-            // const that = this;
-
-            if (filtersToApply?.length > 0) {
-                const filterString = that.buildFilterString(filtersToApply);
-                if (filterString) {
-                    return `filter(${filterString})/${baseApplyQuery}`;
-                }
-            }
-            return baseApplyQuery;
-        },
-        formatValue(val) {
-            // const that = this;
-
-            if (val instanceof Date) return val.toISOString().split("T")[0];
-            if (typeof val === "string")
-                return that.isDateString(val) ? val : `'${val.replace(/'/g, "''")}'`;
-            if (typeof val === "boolean") return val.toString();
-            return val;
-        },
-        isDateString(str) {
-            return /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?)?$/.test(str);
-        },
-        getODataOperator(op) {
-            // const that = this;
-
-            switch (op) {
-                case FilterOperator.EQ:
-                    return "eq";
-                case FilterOperator.NE:
-                    return "ne";
-                case FilterOperator.LT:
-                    return "lt";
-                case FilterOperator.LE:
-                    return "le";
-                case FilterOperator.GT:
-                    return "gt";
-                case FilterOperator.GE:
-                    return "ge";
-                case FilterOperator.BT:
-                    return "bt";
-                case FilterOperator.Contains:
-                    return "contains";
-                case FilterOperator.StartsWith:
-                    return "startswith";
-                case FilterOperator.EndsWith:
-                    return "endswith";
-                default:
-                    return "eq";
-            }
-        },
-        flattenFilters(filters) {
-            const that = this;
-
-            return filters.reduce((acc, item) => {
-                if (item.aFilters) {
-                    acc.push(...item.aFilters);
-                } else {
-                    acc.push(item);
-                }
-                return acc;
-            }, []);
-        },
-        buildFilterString(filters) {
-            // const that = this;
-
-            return filters
-                .map((filter) => {
-                    if (filter.aFilters?.length) {
-                        const group = filter.aFilters
-                            .map(that.buildSingleFilterExpression)
-                            .join(filter.bAnd ? " and " : " or ");
-                        return `(${group})`;
                     }
-                    return that.buildSingleFilterExpression(filter);
-                })
-                .join(" and ");
+
+                });
+                if (st === "") {
+
+                    st = `(${thisFilterString})`;
+
+                } else {
+
+                    st += ` and (${thisFilterString})`;
+
+                }
+
+            });
+            // Date range values
+            const startVal = new Date(that.byId("idDaterangePOP").getDateValue())
+
+                .toISOString()
+
+                .split("T")[0];
+            const endVal = this.byId("idDaterangePOP").getSecondDateValue()
+
+                .toISOString()
+
+                .split("T")[0];
+            const foundobj = that.calWeekData.find(
+                f =>
+
+                    f.WEEK_STARTDATE.toISOString().split("T")[0] <= startVal &&
+
+                    f.WEEK_ENDDATE.toISOString().split("T")[0] >= startVal
+
+            );
+            const vFromDate = foundobj.WEEK_STARTDATE.toISOString().split("T")[0];
+
+            st = `${st} and (WEEK_DATE ge ${vFromDate} and WEEK_DATE le ${endVal})`; // Add Week
+            // Group by and aggregate
+            const groupby = groupbyFields.join(",");
+            const aggregate = measures
+
+                .map(m => `${m.field} with ${m.operation} as ${m.field}_${m.operation.toUpperCase()}`)
+
+                .join(", ");
+            // Final apply query
+            const finalApply = `filter(${st})/groupby((${groupby}),aggregate(${aggregate}))${orderby}`;
+            return finalApply;
+
         },
         async loadData() {
-            // const that = this;
             const bPressed = this.getView().byId("idTogglePOP").getPressed();
             const selectedItem = bPressed ? "Telescopic View" : "Calendar View";
 
@@ -706,23 +591,10 @@ sap.ui.define([
             } else {
                 that.weekType = "TELESCOPIC_WEEK";
             }
-            let aFilters = that.byId("smartFilterBarPOP").getFilters();
             that.byId("idPivotPagePOP").setBusy(true);
 
-            const startVal = new Date(that.byId("idDaterangePOP").getDateValue()).toISOString().split('T')[0],
-                endVal = this.byId("idDaterangePOP").getSecondDateValue().toISOString().split('T')[0];
-            var foundobj = that.calWeekData.find(f => f.WEEK_STARTDATE.toISOString().split('T')[0] <= startVal && f.WEEK_ENDDATE.toISOString().split('T')[0] >= startVal);
-            const vFromDate = foundobj.WEEK_STARTDATE.toISOString().split('T')[0];
-            const weekFilter = new Filter("WEEK_DATE", FilterOperator.BT, new Date(vFromDate), new Date(endVal))
-            if (aFilters) {
-                aFilters.push(weekFilter);
-            }
-
-
-
-            // const flatFilter = that.flattenFilters(aFilters);
-            const allField = Object.keys(that.byId("smartFilterBarPOP").getFilterData());
-            // let groupbyFields = [];
+            const filterData = that.byId("smartFilterBarPOP").getFilterData();
+            const allField = Object.keys(filterData);
 
             let groupbyFields = [
                 "LOCATION_ID",
@@ -737,55 +609,34 @@ sap.ui.define([
                 "ORD_TYPE",
                 "MAT_PARENT",
                 "COMP_PROCURE_TYPE",
-                "PROD_ORDER",
-                "WEEK_DATE",
-                that.weekType
-            ];
-            const groupbyFields2 = [
-                "LOCATION_ID",
-                "LOCATION_DESC",
-                "REF_PRODID",
-                "PROD_DESC",
-                "SALES_DOC",
-                "UNIQUE_ID",
-                "SALESDOC_ITEM",
-                "MANU_LOC",
-                "COMPONENT",
-                "ORD_TYPE",
-                "MAT_PARENT",
-                "COMP_QTY",
-                "COMP_PROCURE_TYPE",
-                "PROD_ORDER",
+                // "PROD_ORDER",
                 "WEEK_DATE",
                 that.weekType
             ];
             let orderby = '/orderby(LOCATION_ID,REF_PRODID,COMPONENT,WEEK_DATE)';
-            if (allField.find(i => i === "UNIQUE_ID") || (that.columns.includes("Unique Id") || that.columns.includes("Sales Document") || allField.find(i => i === "SALES_DOC"))) {
-                groupbyFields = groupbyFields2;
-                that.topCount = 20000;
+            const uniqueFields = ["UNIQUE_ID", "PROD_ORDER", "SALES_DOC"];
+            const columnFields = ["Unique Id", "Order #", "Sales Document"];
+
+            if (allField.some(f => uniqueFields.includes(f)) || that.columns.some(c => columnFields.includes(c))) {
+                groupbyFields.push("UNIQUE_ID", "SALES_DOC", "PROD_ORDER");
+                that.topCount = 15000;
                 orderby = '/orderby(REF_PRODID,COMPONENT,UNIQUE_ID,SALES_DOC,WEEK_DATE)';
             }
+            const measures = [
+                { field: "COMP_QTY", operation: "sum" }
+            ];
 
-            const fil = (allField.find(i => !["REF_PRODID", "WEEK_DATE"].includes(i))) ? aFilters[0].aFilters : aFilters;
-            const
-                measures = [
-                    { field: "COMP_QTY", operation: "sum" }
-                ],
-                baseApplyQuery = that.getApplyQueryForFields(groupbyFields, measures),
-                finalApplyQuery = that.getFilterApplyQuery(
-                    baseApplyQuery,
-                    fil
-                );
+            const applyQuery = that.makeApplyQuery(filterData, groupbyFields, measures, orderby);
 
             try {
                 const res = await that.readModel(
                     "getProdOrdConsumptionNew", [], {
-                    $apply: finalApplyQuery + orderby
+                    $apply: applyQuery
                 }
                 );
 
-                const filterRes = res.filter(o => new Date(o.WEEK_DATE) >= new Date(vFromDate) && new Date(o.WEEK_DATE) <= new Date(endVal))
-                that.allData.push(...filterRes);
+                // const filterRes = res.filter(o => new Date(o.WEEK_DATE) >= new Date(vFromDate) && new Date(o.WEEK_DATE) <= new Date(endVal))
+                that.allData.push(...res);
                 that.allData = that.allData.sort((a, b) => new Date(a.WEEK_DATE) - new Date(b.WEEK_DATE));
                 that.loadPivotTab(that.allData)
                 that.dataReady = true;
@@ -1086,7 +937,6 @@ sap.ui.define([
             }
         },
         setDateRange(mode = "disable", years = 2, months = 3) {
-            const that = this;
             const oDateL = new Date();
             const oDateH = new Date();
             if (mode === "disable") {
@@ -1103,7 +953,6 @@ sap.ui.define([
                 that.byId("idDaterangePOP").setSecondDateValue(oDateH);
             }
             that.byId("idDaterangePOP").setMinDate(new Date());
-            // that.byId("idDaterangePOP").setMinDate(new Date(new Date().setDate(new Date().getDate() + 7)));
         },
         onNavPress: function () {
             if (sap.ushell && sap.ushell.Container && sap.ushell.Container.getService) {
@@ -1122,7 +971,6 @@ sap.ui.define([
                 //Navigate to second app
                 sap.m.URLHelper.redirect(url, true);
             }
-        },
-
+        }
     });
 });
