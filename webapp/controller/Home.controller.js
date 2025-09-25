@@ -233,8 +233,8 @@ sap.ui.define([
             if (window.jQuery && window.jQuery.fn.pivot) {
                 var weekMod = "Telescopic Week";
                 const bPressed = this.getView().byId("idTogglePOP").getPressed();
-                const selectedItem = bPressed ? "Telescopic View" : "Calendar View";
-                if (selectedItem === "Calendar View")
+                const selectedItem = bPressed ? "Telescopic Week" : "Calendar Week";
+                if (selectedItem === "Calendar Week")
                     weekMod = "Calendar Week"
                 const rows = that.columns,
                     cols = [weekMod],
