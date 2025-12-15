@@ -24,6 +24,35 @@ sap.ui.define([
             that.loadFragments();
             // that.is_Go_Ready_To_Press_Again = true;
             that.oGModel.setProperty("/showPivot", false);
+            var oMetaModel = that.aModel.getMetaModel();
+
+            if (sap.ushell) {
+                that.sUser = sap.ushell?.Container?.getService("UserInfo")?.getEmail()
+            }
+            if(!that.sUser){
+            that.sUser='null';
+        }
+            oMetaModel.loaded().then(function () {
+                that.updateValueListConstantMail(oMetaModel, "getProdOrdConsumptionNewAnly", "REF_PRODID", that.sUser);
+                that.updateValueListConstantMail(oMetaModel, "getProdOrdConsumptionNewAnly", "LOCATION_ID", that.sUser);
+            });
+        },
+        updateValueListConstantMail(oMetaModel, entityName, propertyName, userId) {
+            const entities = oMetaModel.getObject("/dataServices/schema/0/entityType");
+            const entity = entities?.find(e => e.name === entityName);
+            const prop = entity?.property?.find(p => p.name === propertyName);
+            const valList = prop?.["com.sap.vocabularies.Common.v1.ValueList"];
+            const constantParam = valList?.Parameters?.find(
+                p => p.RecordType === "com.sap.vocabularies.Common.v1.ValueListParameterConstant"
+
+            );
+
+            if (constantParam) {
+                constantParam.Constant.String = userId;
+                return constantParam;
+            }
+
+            throw new Error("ValueList constant parameter not found");
         },
         loadFragments() {
             if (!that._pivotSetting) {
