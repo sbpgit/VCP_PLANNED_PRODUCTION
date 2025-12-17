@@ -29,9 +29,9 @@ sap.ui.define([
             if (sap.ushell) {
                 that.sUser = sap.ushell?.Container?.getService("UserInfo")?.getEmail()
             }
-            if(!that.sUser){
-            that.sUser='null';
-        }
+            if (!that.sUser) {
+                that.sUser = 'null';
+            }
             oMetaModel.loaded().then(function () {
                 that.updateValueListConstantMail(oMetaModel, "getProdOrdConsumptionNewAnly", "REF_PRODID", that.sUser);
                 that.updateValueListConstantMail(oMetaModel, "getProdOrdConsumptionNewAnly", "LOCATION_ID", that.sUser);
@@ -61,6 +61,13 @@ sap.ui.define([
                     that
                 );
                 that.getView().addDependent(that._pivotSetting);
+            }
+            if (!that._PlanOrder) {
+                that._PlanOrder = sap.ui.xmlfragment(
+                    "vcpapp.vcpprodordconsumptionpivot.fragments.PlanOrder",
+                    that
+                );
+                that.getView().addDependent(that._PlanOrder);
             }
         },
         onAfterRendering() {
@@ -108,6 +115,7 @@ sap.ui.define([
                 that.skip = 0;
                 that.topCount = 30000;
                 that.allData = [];
+                that.salesSet = new Set();
                 if (selectedItem == "Calendar View") {
                     this.loadData("CALENDAR_WEEK");
                 } else {
@@ -293,6 +301,27 @@ sap.ui.define([
                 that.pivotPage.setBusy(false);
             }
         },
+        async loadPlannedOrder(salDoc) {
+            that.pivotPage.setBusy(true);
+            try {
+                const oResults = await that.readModel("getSalesProductionOrder", [
+                    new Filter("SALES_DOC", FilterOperator.EQ, salDoc),
+                ]);
+                that._PlanOrder.open();
+                sap.ui.getCore().byId("idProdOrderTable").setModel(new JSONModel({
+                    results: oResults
+                }));
+                sap.ui.getCore().byId("idProdOrder").setTitle(salDoc + " " + "- Planned Order");
+                that.pivotPage.setBusy(false);
+
+            } catch (error) {
+                that.pivotPage.setBusy(false);
+                MessageToast.show(error.message);
+            }
+        },
+        onClosePlan() {
+            that._PlanOrder.close();
+        },
         onCloseDialog() {
             that.byId("idForecastDetailsPOP").setModel(new JSONModel({
                 items: []
@@ -353,9 +382,9 @@ sap.ui.define([
                     "Unique Id",
                     "Sales Document",
                     "Sales Doc. Item",
-                    "Order Type",
+                    // "Order Type",
                     "Procurement Type",
-                    "Order #"
+                    // "Order #"
                 ];
 
             if (!that.settingData) {
@@ -450,7 +479,7 @@ sap.ui.define([
             const selectItems = sap.ui.getCore().byId("idDataTablePOP").getSelectedItems();
             that.selectItems = selectItems;
             const currentColumn = sap.ui.getCore().byId("idDataTablePOP").getModel().getData().data.filter(o => o.select).map(o => o.field);
-            const requiredColumns = ["Unique Id", "Sales Document", "Order #"];
+            const requiredColumns = ["Unique Id", "Sales Document"];
 
             const hadRequiredColumns = requiredColumns.some(col => that.columns.includes(col));
             const hasRequiredColumns = requiredColumns.some(col => currentColumn.includes(col));
@@ -539,6 +568,7 @@ sap.ui.define([
             that.setDateRange("disable", 2);
             newDiv.id = `pivotGrid`;
             newDiv.textContent = "";
+            that.salesSet = new Set();
             that.columns = ["Product", "Parent Location", "Parent", "Component"];
             var existingDiv = document.querySelector(`[id*='mainDivPOP']`);
             if (existingDiv.children.length > 0) {
@@ -635,7 +665,7 @@ sap.ui.define([
                 "SALESDOC_ITEM",
                 "MANU_LOC",
                 "COMPONENT",
-                "ORD_TYPE",
+                // "ORD_TYPE",
                 "MAT_PARENT",
                 "COMP_PROCURE_TYPE",
                 // "PROD_ORDER",
@@ -643,11 +673,11 @@ sap.ui.define([
                 that.weekType
             ];
             let orderby = '/orderby(LOCATION_ID,REF_PRODID,COMPONENT,WEEK_DATE)';
-            const uniqueFields = ["UNIQUE_ID", "PROD_ORDER", "SALES_DOC"];
-            const columnFields = ["Unique Id", "Order #", "Sales Document"];
+            const uniqueFields = ["UNIQUE_ID", "SALES_DOC"];
+            const columnFields = ["Unique Id", "Sales Document"];
 
             if (allField.some(f => uniqueFields.includes(f)) || that.columns.some(c => columnFields.includes(c))) {
-                groupbyFields.push("UNIQUE_ID", "SALES_DOC", "PROD_ORDER");
+                groupbyFields.push("UNIQUE_ID", "SALES_DOC");
                 that.topCount = 15000;
                 orderby = '/orderby(REF_PRODID,COMPONENT,UNIQUE_ID,SALES_DOC,WEEK_DATE)';
             }
@@ -667,6 +697,9 @@ sap.ui.define([
                 // const filterRes = res.filter(o => new Date(o.WEEK_DATE) >= new Date(vFromDate) && new Date(o.WEEK_DATE) <= new Date(endVal))
                 that.allData.push(...res);
                 that.allData = that.allData.sort((a, b) => new Date(a.WEEK_DATE) - new Date(b.WEEK_DATE));
+                for (const { SALES_DOC } of res) {
+                    that.salesSet.add(SALES_DOC);
+                }
                 that.loadPivotTab(that.allData)
                 that.dataReady = true;
             } catch (error) {
@@ -726,6 +759,22 @@ sap.ui.define([
                                 $(this).css("vertical-align", "top");
                             }
                         });
+                    if (that.columns.includes("Sales Document")) {
+                        $("#pivotGrid table.pvtTable tbody tr th").each(function () {
+                            const text = this.textContent.trim();
+                            if (that.salesSet.has(text)) {
+                                $(this).addClass("clickable-cell").css("cursor", "pointer");
+                            }
+                        });
+                        $("#pivotGrid").off("click", "th.clickable-cell")
+                            .on("click", "th.clickable-cell", function () {
+                                const text = this.textContent.trim();
+                                if (that.salesSet.has(text))
+                                    that.loadPlannedOrder(text);
+                            });
+                    }
+
+
 
                     const allWeek = $(".pvtTable").find("thead tr:first th");
 

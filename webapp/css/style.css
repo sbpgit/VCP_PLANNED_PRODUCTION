@@ -445,3 +445,16 @@ th.frezzThead {
     background-color: #f3f4f6;
     cursor: pointer;
 }
+
+.clickable-cell {
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    border: 1px solid transparent;
+    color: #063b7a !important;
+}
+
+.clickable-cell:hover {
+    background-color: #f0f0f0;
+    box-shadow: inset 0 0 0 1px #ddd;
+    border-color: #bbb;
+    /* Or any color you prefer for the border on hover */
+}

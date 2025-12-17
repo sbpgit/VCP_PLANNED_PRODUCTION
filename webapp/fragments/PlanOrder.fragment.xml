@@ -1,0 +1,42 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+ displayBlock="true">
+
+    <Dialog id="idProdOrder" title="Production Order" titleAlignment="Center" contentWidth="800px" class="sapUiContentPadding">
+
+        <Table id="idProdOrderTable" inset="false" alternateRowColors="true" fixedLayout="Strict" items="{/results}">
+
+            <columns>
+                <Column hAlign="Center"  mergeDuplicates="true">
+                    <Text text="Sales Document" />
+                </Column>
+                <Column hAlign="Center" mergeDuplicates="true">
+                    <Text text="Production Order" />
+                </Column>
+                <Column hAlign="Center" mergeDuplicates="true">
+                    <Text text="Planned / Production" />
+                </Column>
+                <Column hAlign="Center">
+                    <Text text="Component Quantity"/>
+                </Column>
+            </columns>
+
+            <items>
+                <ColumnListItem>
+                    <cells>
+                        <Text text="{SALES_DOC}" />
+                        <Text text="{PROD_ORDER}" />
+                        <Text text="{ORD_TYPE}" />
+                        <Text text="{COMP_QTY}" />
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+        <footer>
+            <OverflowToolbar>
+                <Button text="Close" press="onClosePlan" tooltip="Close" width="100%" />
+            </OverflowToolbar>
+        </footer>
+    </Dialog>
+</core:FragmentDefinition>
