@@ -12,10 +12,10 @@
                     <Text text="Sales Document" />
                 </Column>
                 <Column hAlign="Center" mergeDuplicates="true">
-                    <Text text="Production Order" />
+                    <Text text="Order" />
                 </Column>
                 <Column hAlign="Center" mergeDuplicates="true">
-                    <Text text="Planned / Production" />
+                    <Text text="Planned / Production Type" />
                 </Column>
                 <Column hAlign="Center">
                     <Text text="Component Quantity"/>
