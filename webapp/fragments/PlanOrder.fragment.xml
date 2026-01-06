@@ -3,7 +3,7 @@
     xmlns:mvc="sap.ui.core.mvc"
  displayBlock="true">
 
-    <Dialog id="idProdOrder" title="Production Order" titleAlignment="Center" contentWidth="800px" class="sapUiContentPadding">
+    <Dialog id="idProdOrder" title="Production Order" draggable="true" titleAlignment="Center" contentWidth="800px" class="sapUiContentPadding">
 
         <Table id="idProdOrderTable" inset="false" alternateRowColors="true" fixedLayout="Strict" items="{/results}">
 
