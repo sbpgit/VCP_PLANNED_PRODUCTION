@@ -29,23 +29,23 @@
             <Annotations Target="SAP.getProdOrdConsumptionNewAnly/LOCATION_ID">
                 <Annotation Term="Common.ValueList">
                     <Record Type="Common.ValueListType">
-                        <!-- <PropertyValue Property="CollectionPath" String="getAlytRolesLocProd"/> -->
-                        <PropertyValue Property="CollectionPath" String="getProdOrdConsumptionNewAnly"/>
+                        <PropertyValue Property="CollectionPath" String="getAlytRolesLocProd"/>
+                        <!-- <PropertyValue Property="CollectionPath" String="getProdOrdConsumptionNewAnly"/> -->
                         <PropertyValue Property="SearchSupported" Bool="true"/>
                         <PropertyValue Property="Parameters">
                             <Collection>
-                                <!-- <Record Type="Common.ValueListParameterConstant">
+                                <Record Type="Common.ValueListParameterConstant">
                                     <PropertyValue Property="ValueListProperty" String="USER"/>
                                     <PropertyValue Property="Constant" String="Email"/>
-                                </Record> -->
+                                </Record>
                                 <!--   <Record Type="Common.ValueListParameterIn">
                                     <PropertyValue Property="LocalDataProperty" PropertyPath="REF_PRODID" />
                                     <PropertyValue Property="ValueListProperty" String="REF_PRODID" />
                                 </Record>   -->
                                 <Record Type="Common.ValueListParameterInOut">
                                     <PropertyValue Property="LocalDataProperty" PropertyPath="LOCATION_ID"/>
-                                    <PropertyValue Property="ValueListProperty" String="LOCATION_ID"/>
-                                    <!-- <PropertyValue Property="ValueListProperty" String="FACTORY_LOC"/> -->
+                                    <!-- <PropertyValue Property="ValueListProperty" String="LOCATION_ID"/> -->
+                                    <PropertyValue Property="ValueListProperty" String="FACTORY_LOC"/>
                                 </Record>
                                 <Record Type="Common.ValueListParameterDisplayOnly">
                                     <PropertyValue Property="ValueListProperty" String="LOCATION_DESC"/>
@@ -74,19 +74,19 @@
             <Annotations Target="SAP.getProdOrdConsumptionNewAnly/REF_PRODID">
                 <Annotation Term="Common.ValueList">
                     <Record Type="Common.ValueListType">
-                        <!-- <PropertyValue Property="CollectionPath" String="getAlytRolesLocProd"/> -->
-                        <PropertyValue Property="CollectionPath" String="getProdOrdConsumptionNewAnly"/>
+                        <PropertyValue Property="CollectionPath" String="getAlytRolesLocProd"/>
+                        <!-- <PropertyValue Property="CollectionPath" String="getProdOrdConsumptionNewAnly"/> -->
                         <PropertyValue Property="SearchSupported" Bool="true"/>
                         <PropertyValue Property="Parameters">
                             <Collection>
-                                <!-- <Record Type="Common.ValueListParameterConstant">
+                                <Record Type="Common.ValueListParameterConstant">
                                     <PropertyValue Property="ValueListProperty" String="USER"/>
                                     <PropertyValue Property="Constant" String="Email"/>
-                                </Record> -->
+                                </Record>
                                 <Record Type="Common.ValueListParameterIn">
                                     <PropertyValue Property="LocalDataProperty" PropertyPath="LOCATION_ID"/>
-                                    <PropertyValue Property="ValueListProperty" String="LOCATION_ID"/>
-                                    <!-- <PropertyValue Property="ValueListProperty" String="FACTORY_LOC"/> -->
+                                    <!-- <PropertyValue Property="ValueListProperty" String="LOCATION_ID"/> -->
+                                    <PropertyValue Property="ValueListProperty" String="FACTORY_LOC"/>
                                 </Record>
                                 <Record Type="Common.ValueListParameterInOut">
                                     <PropertyValue Property="LocalDataProperty" PropertyPath="REF_PRODID"/>

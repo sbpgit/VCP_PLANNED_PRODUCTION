@@ -32,10 +32,10 @@ sap.ui.define([
             if (!that.sUser) {
                 that.sUser = 'null';
             }
-            // oMetaModel.loaded().then(function () {
-            //     that.updateValueListConstantMail(oMetaModel, "getProdOrdConsumptionNewAnly", "REF_PRODID", that.sUser);
-            //     that.updateValueListConstantMail(oMetaModel, "getProdOrdConsumptionNewAnly", "LOCATION_ID", that.sUser);
-            // });
+            oMetaModel.loaded().then(function () {
+                that.updateValueListConstantMail(oMetaModel, "getProdOrdConsumptionNewAnly", "REF_PRODID", that.sUser);
+                that.updateValueListConstantMail(oMetaModel, "getProdOrdConsumptionNewAnly", "LOCATION_ID", that.sUser);
+            });
         },
         updateValueListConstantMail(oMetaModel, entityName, propertyName, userId) {
             const entities = oMetaModel.getObject("/dataServices/schema/0/entityType");

@@ -1,20 +1,25 @@
 <core:FragmentDefinition xmlns="sap.m"
     xmlns:core="sap.ui.core"
-    xmlns:mvc="sap.ui.core.mvc"
- displayBlock="true">
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true">
 
-    <Dialog id="idProdOrder" title="Production Order" draggable="true" titleAlignment="Center" contentWidth="800px" class="sapUiContentPadding">
+    <Dialog id="idProdOrder" title="Production Order" draggable="true" resizable="true" titleAlignment="Center" contentWidth="800px" class="sapUiContentPadding">
 
         <Table id="idProdOrderTable" inset="false" alternateRowColors="true" fixedLayout="Strict" items="{/results}">
 
             <columns>
-                <Column hAlign="Center"  mergeDuplicates="true">
+                <Column hAlign="Center" mergeDuplicates="true">
                     <Text text="Sales Document" />
                 </Column>
-                <Column hAlign="Center" mergeDuplicates="true">
+                <Column hAlign="Center">
+                    <Text text="Sales Document Item" />
+                </Column>
+                <Column hAlign="Center">
+                    <Text text="Product" />
+                </Column>
+                <Column hAlign="Center">
                     <Text text="Order" />
                 </Column>
-                <Column hAlign="Center" mergeDuplicates="true">
+                <Column hAlign="Center">
                     <Text text="Planned / Production Type" />
                 </Column>
                 <Column hAlign="Center">
@@ -26,6 +31,8 @@
                 <ColumnListItem>
                     <cells>
                         <Text text="{SALES_DOC}" />
+                        <Text text="{SALESDOC_ITEM}" />
+                        <Text text="{PRODUCT_ID}" />
                         <Text text="{PROD_ORDER}" />
                         <Text text="{ORD_TYPE}" />
                         <Text text="{COMP_QTY}" />
