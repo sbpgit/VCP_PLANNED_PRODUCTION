@@ -311,7 +311,7 @@ sap.ui.define([
                 sap.ui.getCore().byId("idProdOrderTable").setModel(new JSONModel({
                     results: oResults
                 }));
-                sap.ui.getCore().byId("idProdOrder").setTitle(salDoc + " " + "- Planned Order");
+                sap.ui.getCore().byId("idProdOrder").setTitle(salDoc + " " + "- Sales Order");
                 that.pivotPage.setBusy(false);
 
             } catch (error) {

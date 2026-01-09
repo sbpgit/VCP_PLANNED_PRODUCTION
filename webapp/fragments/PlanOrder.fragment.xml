@@ -23,7 +23,7 @@
                     <Text text="Planned / Production Type" />
                 </Column>
                 <Column hAlign="Center">
-                    <Text text="Component Quantity"/>
+                    <Text text="Order Quantity"/>
                 </Column>
             </columns>
 
